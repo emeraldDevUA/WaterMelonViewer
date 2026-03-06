@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import {sceneOptions} from "./SceneOptions";
-import {Group} from "three";
+// import {Group} from "three";
 
 export class Viewer {
     private readonly scene: THREE.Scene
@@ -19,11 +19,8 @@ export class Viewer {
 
         this.init()
     }
-    public addMesh (mesh: THREE.Mesh) {
-        this.scene.add(mesh)
-    }
 
-    public addMesh_(mesh: Group) {
+    public addMesh (mesh: THREE.Object3D) {
         this.scene.add(mesh)
     }
 
@@ -34,9 +31,26 @@ export class Viewer {
 
                 // example: enable wireframe
                 // @ts-ignore
-                (mesh.material as THREE.Material).wireframe = true;
+                (mesh.material as THREE.Material).wireframe = this.options.debug.wireframe;
+                if(this.options.debug.displayPoints == true){
+                    const point_helper = new THREE.Points(mesh.geometry)
+                    this.scene.add(point_helper)
+                }
+
+
             }
         });
+
+        if(this.options.debug.grid.showGrid == true){
+             const gridHelper = new THREE.GridHelper(this.options.debug.grid.gridSize)
+             this.scene.add(gridHelper)
+        }
+
+        if(this.options.debug.axes.showAxes == true){
+            const axesHelper = new THREE.AxesHelper(this.options.debug.axes.axisSize)
+            this.scene.add(axesHelper)
+        }
+
     }
 
     private init() {
@@ -50,7 +64,12 @@ export class Viewer {
         document.getElementById('app')?.appendChild(this.renderer.domElement)
         this.renderer.setAnimationLoop(this.animate)
     }
+
     private animate = (time: number) => {
         this.renderer.render(this.scene, this.camera)
+    }
+
+    public setFog(fog: THREE.Fog | THREE.FogExp2 | null) {
+        this.scene.fog = fog
     }
 }

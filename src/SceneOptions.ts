@@ -11,11 +11,18 @@ export const sceneOptions = {
     camera: {
         autoRotate: false,
         autoRotateSpeed: 1,
+
     },
     debug: {
-        showGrid: false,
-        showAxes: false,
-        wireframe: false,
+        grid: {
+            showGrid: false,
+            gridSize: 30,
+        },
+        axes: {
+            showAxes: true,
+            axisSize: 50,
+        },
+        wireframe: true,
         displayPoints: false,
     }
 }

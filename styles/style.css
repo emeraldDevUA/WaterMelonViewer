@@ -39,6 +39,8 @@ h1 {
   height: 100vh;
 }
 
+#ui{  background-color: #242424;}
+
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
+// import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 // import * as SkeletonUtiols from 'three/examples/jsm/utils/SkeletonUtils.js'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Viewer} from "./Viewer";
@@ -45,15 +45,15 @@ import {sceneOptions} from "./SceneOptions";
 
 
 ///////////////// directional light /////////////////
-// const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
 // scene.add(directionalLight)
-// directionalLight.position.set(-30, 50, 0)
-// directionalLight.castShadow = true
-// directionalLight.shadow.camera.bottom = -12
+directionalLight.position.set(-30, 50, 0)
+directionalLight.castShadow = true
+directionalLight.shadow.camera.bottom = -30
 
 ///////////////// dr-light helper /////////////////
-// const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5)
-// scene.add(dLightHelper)
+const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5)
+//scene.add(dLightHelper)
 
 ///////////////// dr-light shadow helper /////////////////
 // const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
@@ -178,27 +178,31 @@ const viewer = new Viewer(sceneOptions);
 
 viewer.addMesh(sphereMesh);
 viewer.addMesh(boxMesh);
+viewer.addMesh(directionalLight);
+viewer.addMesh(dLightHelper)
+
 
 loader.load(modelUrl.href, (object) => {
     object.scale.set(.1, .1, .1);
     object.position.set(-0, -0.5, 0);
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
         color: 0xADD8E6,
         side: THREE.FrontSide,
-        wireframe: false
+        wireframe: false,
     })
     object.traverse((node) => {
         if ((node as THREE.Mesh).isMesh) {
             node.castShadow = true;
+            node.receiveShadow = true
             // @ts-ignore
             node.material = material;
         }
     });
 
 
-    viewer.addMesh_(object);
+    viewer.addMesh(object);
 });
-
+viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 
 const btn = document.getElementById("wf");
 
