@@ -206,6 +206,21 @@ viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 
 const btn = document.getElementById("wf");
 
-btn.addEventListener("click", (e) => {
+// btn.addEventListener("click", (e) => {
+//     viewer.setSettings();
+// })
+
+
+const menu_button = document.getElementById("wf")!;
+const apply_setting_button = document.getElementById("save")!;
+
+const panel = document.getElementById("settings_container")!;
+
+
+menu_button.addEventListener("click", () => {
+    panel.classList.toggle("hidden");
+});
+
+apply_setting_button.addEventListener("click", () => {
     viewer.setSettings();
-})
+});

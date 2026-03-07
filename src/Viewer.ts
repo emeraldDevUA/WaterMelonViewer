@@ -54,7 +54,7 @@ export class Viewer {
     }
 
     private init() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(window.innerWidth, window.innerHeight );
         this.renderer.setPixelRatio(window.devicePixelRatio);
 
         this.camera.position.set(5, 5, 5)

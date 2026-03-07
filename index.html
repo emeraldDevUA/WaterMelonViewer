@@ -11,7 +11,76 @@
     <div id="app">
 
       <div id="ui">
-        <button id="wf">Apply settings</button>
+        <button id="wf">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <path d="M3 6.5a1 1 0 100-2 1 1 0 000 2z"></path>
+            <path d="M6 5.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
+            <path d="M6 9.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
+            <path d="M10.5 13a.5.5 0 000 1h7a.5.5 0 000-1h-7z"></path>
+            <path d="M8 13.5a1 1 0 11-2 0 1 1 0 012 0z"></path>
+            <path d="M3 10.5a1 1 0 100-2 1 1 0 000 2z"></path>
+          </svg>
+        </button>
+
+        <div id="settings_container" class = "hidden">
+
+          <h3>Renderer</h3>
+
+          <div class="setting">
+            <label for="backgroundColor">Background Color</label>
+            <input type="color" id="backgroundColor">
+          </div>
+
+          <div class="setting">
+            <label for="exposure">Exposure</label>
+            <input type="number" id="exposure" step="0.1" min="0" max="5" value="1.2">
+          </div>
+
+          <div class="setting">
+            <label for="shadowsEnabled">Enable Shadows</label>
+            <input type="checkbox" id="shadowsEnabled">
+          </div>
+
+
+          <h3>Camera</h3>
+
+          <div class="setting">
+            <label for="autoRotate">Auto Rotate</label>
+            <input type="checkbox" id="autoRotate">
+          </div>
+
+          <div class="setting">
+            <label for="autoRotateSpeed">Auto Rotate Speed</label>
+            <input type="number" id="autoRotateSpeed" step="0.1" min="0" max="10" value="1">
+          </div>
+
+
+          <h3>Lighting</h3>
+
+          <div class="setting">
+            <label for="lightIntensity">Directional Light Intensity</label>
+            <input type="number" id="lightIntensity" step="0.1" min="0" max="10" value="1">
+          </div>
+
+          <div class="setting">
+            <label for="ambientIntensity">Ambient Light Intensity</label>
+            <input type="number" id="ambientIntensity" step="0.1" min="0" max="5" value="0.5">
+          </div>
+
+
+          <h3>Debug</h3>
+
+          <div class="setting">
+            <label for="showGrid">Show Grid</label>
+            <input type="checkbox" id="showGrid">
+          </div>
+
+          <div class="setting">
+            <label for="showAxes">Show Axes</label>
+            <input type="checkbox" id="showAxes">
+          </div>
+          <button id="save">Save</button>
+        </div>
       </div>
 
     </div>
