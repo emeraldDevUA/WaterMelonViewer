@@ -1,6 +1,8 @@
 import * as THREE from 'three'
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
+
 import {sceneOptions} from "./SceneOptions";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
+import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper.js";
 // import {Group} from "three";
 
 export class Viewer {
@@ -29,14 +31,40 @@ export class Viewer {
             if ((object as THREE.Mesh).isMesh) {
                 const mesh = object as THREE.Mesh;
 
-                // example: enable wireframe
-                // @ts-ignore
-                (mesh.material as THREE.Material).wireframe = this.options.debug.wireframe;
-                if(this.options.debug.displayPoints == true){
-                    const point_helper = new THREE.Points(mesh.geometry)
-                    this.scene.add(point_helper)
-                }
 
+
+                if (this.options.debug.normals.showVertexNormals) {
+
+                    if (!mesh.userData.normalHelper) {
+
+                        const helper = new VertexNormalsHelper(
+                            mesh,
+                            this.options.debug.normals.size,
+                            0x00ff00
+                        );
+
+                        this.scene.add(helper);
+                        mesh.userData.normalHelper = helper;
+                    }
+                }
+                    // example: enable wireframe
+                // @ts-ignore
+                (mesh.material as THREE.Material).wireframe = this.options.debug.wireframe.enabled as boolean;
+                if (this.options.debug.points.enabled) {
+
+                    const material = new THREE.PointsMaterial({
+                        color: 0xffffff,
+                        size: 0.05
+                    })
+
+                    const pointHelper = new THREE.Points(mesh.geometry, material)
+
+                    pointHelper.position.copy(mesh.position)
+                    pointHelper.rotation.copy(mesh.rotation)
+                    pointHelper.scale.copy(mesh.scale)
+
+                    this.scene.add(pointHelper)
+                }
 
             }
         });

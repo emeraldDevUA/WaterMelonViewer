@@ -183,8 +183,7 @@ viewer.addMesh(dLightHelper)
 
 
 loader.load(modelUrl.href, (object) => {
-    object.scale.set(.1, .1, .1);
-    object.position.set(-0, -0.5, 0);
+
     const material = new THREE.MeshStandardMaterial({
         color: 0xADD8E6,
         side: THREE.FrontSide,
@@ -196,6 +195,8 @@ loader.load(modelUrl.href, (object) => {
             node.receiveShadow = true
             // @ts-ignore
             node.material = material;
+            node.scale.set(.1, .1, .1);
+            node.position.set(-0, -0.5, 0);
         }
     });
 

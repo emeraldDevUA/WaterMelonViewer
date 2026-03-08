@@ -17,12 +17,31 @@ export const sceneOptions = {
         grid: {
             showGrid: false,
             gridSize: 30,
+            gridDivisions: 30,
+            gridColor1: 0x444444,
+            gridColor2: 0x888888
         },
         axes: {
             showAxes: true,
             axisSize: 50,
+            axisThickness: 2
         },
-        wireframe: true,
-        displayPoints: false,
+        wireframe: {
+            enabled: false,
+            color: 0xffffff
+        },
+        points: {
+            enabled: false,
+            size: 1,
+            color: 0xff0000
+        },
+        normals: {
+            showVertexNormals: true,
+            showFaceNormals: false,
+            size: 1
+        },
+        performance: {
+            showStats: true
+        }
     }
 }

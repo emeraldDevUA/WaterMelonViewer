@@ -108,11 +108,12 @@ button:focus-visible {
   position: absolute;
   top: 45px;
   width: 260px;
-  padding: 12px;
+  padding-right: 20px;
+  padding-left: 20px;
   background-color: #242424;
   color: white;
   border-radius: 0;
-  font-family: "Cascadia Code";
+  font-family: "Segoe UI", serif;
 }
 
 #save{
