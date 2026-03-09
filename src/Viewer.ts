@@ -29,42 +29,43 @@ export class Viewer {
     }
 
     public setSettings(){
+        const debugContext = this.options.debug;
+
         this.scene.traverse((object) => {
             if ((object as THREE.Mesh).isMesh) {
                 const mesh = object as THREE.Mesh;
+                const meshData = mesh.userData;
 
-                if (this.options.debug.normals.showVertexNormals) {
+                if (debugContext.normals.showVertexNormals) {
 
-                    if (!mesh.userData.normalHelper) {
+                    if (!meshData.normalHelper) {
 
                         const helper = new VertexNormalsHelper(
                             mesh,
-                            this.options.debug.normals.size,
+                            debugContext.normals.size,
                             0x00ff00
                         );
 
                         this.scene.add(helper); // correct
-                        mesh.userData.normalHelper = helper;
+                        meshData.normalHelper = helper;
                     }
 
                 } else {
 
-                    if (mesh.userData.normalHelper) {
+                    if (meshData.normalHelper) {
 
-                        this.scene.remove(mesh.userData.normalHelper);
-                        mesh.userData.normalHelper.dispose();
-                        mesh.userData.normalHelper = null;
-
-
+                        this.scene.remove(meshData.normalHelper);
+                        meshData.normalHelper.dispose();
+                        meshData.normalHelper = null;
                     }
 
                 }
                     // example: enable wireframe
                 // @ts-ignore
-                (mesh.material as THREE.Material).wireframe = this.options.debug.wireframe.enabled as boolean;
-                if (this.options.debug.points.enabled) {
+                (mesh.material as THREE.Material).wireframe = debugContext.wireframe.enabled as boolean;
+                if (debugContext.points.enabled) {
 
-                    if (!mesh.userData.pointsHelper) {
+                    if (!meshData.pointsHelper) {
 
                         const material = new THREE.PointsMaterial({
                             color: 0xffffff,
@@ -74,16 +75,16 @@ export class Viewer {
                         const helper = new THREE.Points(mesh.geometry, material);
 
                         mesh.add(helper); // attach to mesh
-                        mesh.userData.pointsHelper = helper;
+                        meshData.pointsHelper = helper;
                     }
 
                 } else {
 
-                    if (mesh.userData.pointsHelper) {
+                    if (meshData.pointsHelper) {
 
-                        mesh.remove(mesh.userData.pointsHelper);
-                        mesh.userData.pointsHelper.material.dispose();
-                        mesh.userData.pointsHelper = null;
+                        mesh.remove(meshData.pointsHelper);
+                        meshData.pointsHelper.material.dispose();
+                        meshData.pointsHelper = null;
                     }
 
                 }
@@ -91,13 +92,13 @@ export class Viewer {
             }
         });
 
-        if(this.options.debug.grid.showGrid == true){
-             const gridHelper = new THREE.GridHelper(this.options.debug.grid.gridSize)
+        if(debugContext.grid.showGrid == true){
+             const gridHelper = new THREE.GridHelper(debugContext.grid.gridSize)
              this.scene.add(gridHelper)
         }
 
-        if(this.options.debug.axes.showAxes == true){
-            const axesHelper = new THREE.AxesHelper(this.options.debug.axes.axisSize)
+        if(debugContext.axes.showAxes == true){
+            const axesHelper = new THREE.AxesHelper(debugContext.axes.axisSize)
             this.scene.add(axesHelper)
         }
 
