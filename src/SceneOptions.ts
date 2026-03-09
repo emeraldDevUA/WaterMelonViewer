@@ -36,7 +36,7 @@ export const sceneOptions = {
             color: 0xff0000
         },
         normals: {
-            showVertexNormals: true,
+            showVertexNormals: false,
             showFaceNormals: false,
             size: 1
         },

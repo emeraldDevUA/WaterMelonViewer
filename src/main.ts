@@ -205,7 +205,7 @@ loader.load(modelUrl.href, (object) => {
 });
 viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 
-const btn = document.getElementById("wf");
+
 
 // btn.addEventListener("click", (e) => {
 //     viewer.setSettings();
@@ -214,8 +214,11 @@ const btn = document.getElementById("wf");
 
 const menu_button = document.getElementById("wf")!;
 const apply_setting_button = document.getElementById("save")!;
-
 const panel = document.getElementById("settings_container")!;
+
+const vertex_button = document.getElementById("vertices")!;
+const edges_button = document.getElementById("edges")!;
+const normals_button = document.getElementById("normals")!;
 
 
 menu_button.addEventListener("click", () => {
@@ -223,5 +226,24 @@ menu_button.addEventListener("click", () => {
 });
 
 apply_setting_button.addEventListener("click", () => {
+    viewer.setSettings();
+});
+
+
+vertex_button.addEventListener("click", () => {
+    vertex_button.classList.toggle("active");
+    sceneOptions.debug.points.enabled = !sceneOptions.debug.points.enabled;
+    viewer.setSettings();
+});
+
+edges_button.addEventListener("click", () => {
+    edges_button.classList.toggle("active");
+    sceneOptions.debug.wireframe.enabled = !sceneOptions.debug.wireframe.enabled;
+    viewer.setSettings();
+});
+
+normals_button.addEventListener("click", () => {
+    normals_button.classList.toggle("active");
+    sceneOptions.debug.normals.showVertexNormals = !sceneOptions.debug.normals.showVertexNormals;
     viewer.setSettings();
 });
