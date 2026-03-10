@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
+import {loadMesh} from "./ModelAdapter";
 
 
 // const renderer = new THREE.WebGLRenderer()
@@ -133,10 +134,6 @@ sphereMesh.position.set(0, 0, -5)
 // @ts-ignore
 const modelUrl = new URL('../res/Porsche911.obj', import.meta.url);
 
-const loader = new OBJLoader();
-
-
-
 ///////////////// gui /////////////////
 // const gui = new dat.GUI();
 // const options = {
@@ -182,27 +179,11 @@ viewer.addMesh(directionalLight);
 viewer.addMesh(dLightHelper)
 
 
-loader.load(modelUrl.href, (object) => {
+// @ts-ignore
+const model = await loadMesh("res/T72/scene.gltf", import.meta.url);
+model.scale.set(1, 1, 1);
+viewer.addMesh(model);
 
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xADD8E6,
-        side: THREE.FrontSide,
-        wireframe: false,
-    })
-    object.traverse((node) => {
-        if ((node as THREE.Mesh).isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true
-            // @ts-ignore
-            node.material = material;
-            node.scale.set(.1, .1, .1);
-            node.position.set(-0, -0.5, 0);
-        }
-    });
-
-
-    viewer.addMesh(object);
-});
 viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 
 
