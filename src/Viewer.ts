@@ -32,6 +32,7 @@ export class Viewer {
         const debugContext = this.options.debug;
 
         this.scene.traverse((object) => {
+
             if ((object as THREE.Mesh).isMesh) {
                 const mesh = object as THREE.Mesh;
                 const meshData = mesh.userData;
@@ -101,7 +102,8 @@ export class Viewer {
             const axesHelper = new THREE.AxesHelper(debugContext.axes.axisSize)
             this.scene.add(axesHelper)
         }
-
+        this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
+        console.log(this.options.renderer.backgroundColor)
     }
 
     private init() {

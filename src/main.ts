@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 // import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 // import * as SkeletonUtiols from 'three/examples/jsm/utils/SkeletonUtils.js'
-import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
 import {loadMesh} from "./ModelAdapter";
@@ -193,18 +192,55 @@ viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 // })
 
 
-const menu_button = document.getElementById("wf")!;
+const menu_button = document.getElementById("main_menu")!;
+const light_menu = document.getElementById("light_menu")!;
+
 const apply_setting_button = document.getElementById("save")!;
-const panel = document.getElementById("settings_container")!;
+
+const main_settings_container = document.getElementById("settings_container")!;
+const lighting_settings_container = document.getElementById("lighting_container")!;
 
 const vertex_button = document.getElementById("vertices")!;
 const edges_button = document.getElementById("edges")!;
 const normals_button = document.getElementById("normals")!;
 
 
-menu_button.addEventListener("click", () => {
-    panel.classList.toggle("hidden");
+const background_color = document.getElementById("backgroundColor")!;
+
+background_color.addEventListener("input", (event) => {
+    const hex = (event.target as HTMLInputElement).value;
+    sceneOptions.renderer.backgroundColor = parseInt(hex.replace("#", ""), 16);
+    viewer.setSettings();
 });
+
+menu_button.addEventListener("click", () => {
+    menu_button.classList.toggle("active");
+
+    main_settings_container.classList.toggle("hidden");
+});
+
+light_menu.addEventListener("click", () => {
+    light_menu.classList.toggle("active");
+    lighting_settings_container.classList.toggle("hidden");
+
+});
+
+
+const showGridCheckbox = document.getElementById("showGrid") as HTMLInputElement;
+const showAxesCheckbox = document.getElementById("showAxes") as HTMLInputElement;
+
+// Listen for changes
+showGridCheckbox.addEventListener("change", () => {
+    sceneOptions.debug.grid.showGrid = showGridCheckbox.checked;
+    viewer.setSettings(); // update your scene helpers
+});
+
+showAxesCheckbox.addEventListener("change", () => {
+    sceneOptions.debug.axes.showAxes = showAxesCheckbox.checked;
+    viewer.setSettings(); // update your scene helpers
+});
+
+
 
 apply_setting_button.addEventListener("click", () => {
     viewer.setSettings();
