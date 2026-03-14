@@ -14,7 +14,8 @@ import {
     Mesh,
     MeshStandardMaterial,
     Group,
-    BufferGeometry
+    BufferGeometry,
+    Object3DEventMap
 } from "three";
 
 
@@ -32,6 +33,7 @@ const loaderMap = {
     vtk: VTKLoader,
     usd: USDLoader
 };
+
 function getExtension(filePath: string): string | undefined {
     const cleanPath = filePath.split(/[?#]/)[0];
     const parts = cleanPath.split('.');
@@ -57,7 +59,9 @@ export function loadMesh(filePath: string): Promise<Mesh | Group> {
     const loader = getLoader(ext);
 
     // @ts-ignore
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: (arg0: Mesh<BufferGeometry<any, any>,
+                        MeshStandardMaterial, Object3DEventMap> | Group<any>) => void,
+                        reject: (arg0: any) => void) => {
 
         loader.load(
             filePath,

@@ -172,10 +172,10 @@ const modelUrl = new URL('../res/Porsche911.obj', import.meta.url);
 
 const viewer = new Viewer(sceneOptions);
 
-viewer.addMesh(sphereMesh);
-viewer.addMesh(boxMesh);
-viewer.addMesh(directionalLight);
-viewer.addMesh(dLightHelper)
+// viewer.addMesh(sphereMesh);
+// viewer.addMesh(boxMesh);
+// viewer.addMesh(directionalLight);
+// viewer.addMesh(dLightHelper)
 
 
 // @ts-ignore

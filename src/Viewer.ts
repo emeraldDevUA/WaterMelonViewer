@@ -2,8 +2,26 @@ import * as THREE from 'three'
 
 import {sceneOptions} from "./SceneOptions";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
-import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper.js";
+import {VertexNormalsHelper} from "three/examples/jsm/helpers/VertexNormalsHelper.js";
+
 // import {Group} from "three";
+
+type LightPosition = {
+    x: number;
+    y: number;
+    z: number;
+};
+
+type DirectionalLightConfig = {
+    color: number;
+    intensity: number;
+    position: LightPosition;
+    castShadow: boolean;
+};
+
+type LightingConfig = {
+    DirectionalLight?: DirectionalLightConfig | DirectionalLightConfig[];
+};
 
 export class Viewer {
     private readonly scene: THREE.Scene
@@ -11,6 +29,9 @@ export class Viewer {
     private renderer: THREE.WebGLRenderer
     private controls: OrbitControls
 
+    private gridHelper: THREE.GridHelper;
+    private axesHelper: THREE.AxesHelper;
+    private lighting_configurations: Array<THREE.Light> = [];
 
     constructor(private options: typeof sceneOptions) {
         this.scene = new THREE.Scene()
@@ -24,11 +45,11 @@ export class Viewer {
         window.addEventListener("resize", this.onWindowResize.bind(this));
     }
 
-    public addMesh (mesh: THREE.Object3D) {
+    public addMesh(mesh: THREE.Object3D) {
         this.scene.add(mesh)
     }
 
-    public setSettings(){
+    public setSettings() {
         const debugContext = this.options.debug;
 
         this.scene.traverse((object) => {
@@ -52,16 +73,15 @@ export class Viewer {
                     }
 
                 } else {
-
                     if (meshData.normalHelper) {
 
                         this.scene.remove(meshData.normalHelper);
                         meshData.normalHelper.dispose();
                         meshData.normalHelper = null;
                     }
-
                 }
-                    // example: enable wireframe
+
+                // example: enable wireframe
                 // @ts-ignore
                 (mesh.material as THREE.Material).wireframe = debugContext.wireframe.enabled as boolean;
                 if (debugContext.points.enabled) {
@@ -93,21 +113,34 @@ export class Viewer {
             }
         });
 
-        if(debugContext.grid.showGrid == true){
-             const gridHelper = new THREE.GridHelper(debugContext.grid.gridSize)
-             this.scene.add(gridHelper)
+        if (debugContext.grid.showGrid == true) {
+
+            if (this.gridHelper == null) {
+                this.gridHelper = new THREE.GridHelper(debugContext.grid.gridSize)
+            }
+            this.scene.add(this.gridHelper)
+        } else {
+            this.scene.remove(this.gridHelper)
         }
 
-        if(debugContext.axes.showAxes == true){
-            const axesHelper = new THREE.AxesHelper(debugContext.axes.axisSize)
-            this.scene.add(axesHelper)
+        if (debugContext.axes.showAxes == true) {
+            if (this.axesHelper == null) {
+                this.axesHelper = new THREE.AxesHelper(debugContext.axes.axisSize)
+            }
+            this.scene.add(this.axesHelper)
+        } else {
+            this.scene.remove(this.axesHelper)
         }
         this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
-        console.log(this.options.renderer.backgroundColor)
+        this.parseLighting(this.options.lighting);
+
+        this.lighting_configurations.forEach(configuration => {
+            this.scene.add(configuration);
+        })
     }
 
     private init() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight );
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(window.devicePixelRatio);
 
         this.camera.position.set(5, 5, 5)
@@ -136,4 +169,20 @@ export class Viewer {
 
         this.renderer.setSize(width, height);
     }
+
+    private parseLighting(lighting: LightingConfig): void {
+        const dirLights = lighting.DirectionalLight
+            ? Array.isArray(lighting.DirectionalLight)
+                ? lighting.DirectionalLight
+                : [lighting.DirectionalLight]
+            : [];
+
+        for (const config of dirLights) {
+            const light = new THREE.DirectionalLight(config.color, config.intensity);
+            light.position.set(config.position.x, config.position.y, config.position.z);
+            light.castShadow = config.castShadow;
+            this.lighting_configurations.push(light);
+        }
+    }
+
 }
