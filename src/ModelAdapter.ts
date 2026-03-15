@@ -64,9 +64,7 @@ export function loadMesh(filePath: string): Promise<Mesh | Group> {
                         reject: (arg0: any) => void) => {
 
         loader.load(
-            filePath,
-
-            (result: any) => {
+            filePath, (result: any) => {
 
                 // GLTF
                 if (result.scene) {
@@ -100,12 +98,8 @@ export function loadMesh(filePath: string): Promise<Mesh | Group> {
 
             },
 
-            undefined,
-
-            (error: any) => reject(error)
-
+            undefined, (error: any) => reject(error)
         );
-
     });
 
 }

@@ -132,11 +132,17 @@ export class Viewer {
             this.scene.remove(this.axesHelper)
         }
         this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
-        this.parseLighting(this.options.lighting);
 
+        for (const light of this.lighting_configurations) {
+            this.scene.remove(light);
+        }
+        this.lighting_configurations.length = 0;
+
+        this.parseLighting(this.options.lighting);
         this.lighting_configurations.forEach(configuration => {
             this.scene.add(configuration);
         })
+
     }
 
     private init() {

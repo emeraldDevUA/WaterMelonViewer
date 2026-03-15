@@ -187,11 +187,6 @@ viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
 
 
 
-// btn.addEventListener("click", (e) => {
-//     viewer.setSettings();
-// })
-
-
 const menu_button = document.getElementById("main_menu")!;
 const light_menu = document.getElementById("light_menu")!;
 
@@ -204,6 +199,13 @@ const vertex_button = document.getElementById("vertices")!;
 const edges_button = document.getElementById("edges")!;
 const normals_button = document.getElementById("normals")!;
 
+const light_config1 = document.getElementById("lighting_config1")!;
+const light_config2 = document.getElementById("lighting_config2")!;
+const light_config3 = document.getElementById("lighting_config3")!;
+const light_config4 = document.getElementById("lighting_config4")!;
+const light_config5 = document.getElementById("lighting_config5")!;
+
+const lighting_config_buttons: HTMLElement[] = [light_config1, light_config2, light_config3, light_config4, light_config5];
 
 const background_color = document.getElementById("backgroundColor")!;
 
@@ -215,14 +217,43 @@ background_color.addEventListener("input", (event) => {
 
 menu_button.addEventListener("click", () => {
     menu_button.classList.toggle("active");
-
     main_settings_container.classList.toggle("hidden");
 });
+
+
+light_config1.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config1.classList.toggle("active");
+    viewer.setSettings(); // update your scene helpers
+});
+
+light_config2.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config2.classList.toggle("active");
+    viewer.setSettings(); // update your scene helpers
+});
+
+light_config3.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config3.classList.toggle("active");
+    viewer.setSettings(); // update your scene helpers
+});
+
+light_config4.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config4.classList.toggle("active");
+    viewer.setSettings(); // update your scene helpers
+});
+light_config5.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config5.classList.toggle("active");
+    viewer.setSettings(); // update your scene helpers
+});
+
 
 light_menu.addEventListener("click", () => {
     light_menu.classList.toggle("active");
     lighting_settings_container.classList.toggle("hidden");
-
 });
 
 
