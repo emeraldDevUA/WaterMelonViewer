@@ -27,7 +27,7 @@ export const sceneOptions = {
             gridColor2: 0x888888
         },
         axes: {
-            showAxes: true,
+            showAxes: false,
             axisSize: 50,
             axisThickness: 2
         },

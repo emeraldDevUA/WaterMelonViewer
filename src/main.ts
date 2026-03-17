@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
 import {loadMesh} from "./ModelAdapter";
+import {getGeometryInfo} from "./MeshData";
 
 
 // const renderer = new THREE.WebGLRenderer()
@@ -179,21 +180,26 @@ const viewer = new Viewer(sceneOptions);
 
 
 // @ts-ignore
-const model = await loadMesh("res/T72/scene.gltf", import.meta.url);
+const model = await loadMesh("res/Porsche911.obj", import.meta.url);
 model.scale.set(1, 1, 1);
+
 viewer.addMesh(model);
+viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
+viewer.setSettings();
 
-viewer.setFog(new THREE.FogExp2('#ffffff', 0.01))
-
-
+// @ts-ignore
+let info: MeshInfo | GroupInfo;
 
 const menu_button = document.getElementById("main_menu")!;
 const light_menu = document.getElementById("light_menu")!;
+const model_properties = document.getElementById("model_properties")!;
+
 
 const apply_setting_button = document.getElementById("save")!;
 
 const main_settings_container = document.getElementById("settings_container")!;
 const lighting_settings_container = document.getElementById("lighting_container")!;
+const model_properties_container = document.getElementById("model_properties_container")!;
 
 const vertex_button = document.getElementById("vertices")!;
 const edges_button = document.getElementById("edges")!;
@@ -218,6 +224,32 @@ background_color.addEventListener("input", (event) => {
 menu_button.addEventListener("click", () => {
     menu_button.classList.toggle("active");
     main_settings_container.classList.toggle("hidden");
+});
+
+const ui = {
+    vertices: document.getElementById("vert_count")!,
+    faces: document.getElementById("face_count")!,
+    normals: document.getElementById("has_normals")!
+};
+model_properties.addEventListener("click", () => {
+    model_properties_container.classList.toggle("hidden");
+
+    function setProperties(vertexCount: number, faceCount: number, hasNormals: boolean) {
+        ui.vertices.textContent = String(vertexCount);
+        ui.faces.textContent = String(faceCount);
+        ui.normals.textContent = String(hasNormals);
+    }
+
+    if ((model as THREE.Mesh).isMesh) {
+        info = getGeometryInfo(model as THREE.Mesh);
+        const { vertexCount, faceCount, hasNormals, boundingBox } = info;
+        setProperties(vertexCount, faceCount, hasNormals);
+
+    } else {
+        info = getGeometryInfo(model as THREE.Group);
+        const { totalVertices, totalFaces, meshCount } = info;
+        setProperties(totalVertices, totalFaces, false);
+    }
 });
 
 

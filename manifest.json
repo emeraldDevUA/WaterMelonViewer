@@ -1,0 +1,17 @@
+
+{
+  "manifest_version": 3,
+  "name": "Watermelon Viewer",
+  "version": "0.0.1",
+  "description": "This is our first extension, so Hello world!",
+
+  "permissions": ["notifications", "storage", "downloads", "sidePanel"],
+
+
+  "web_accessible_resources": [
+    {
+      "resources": ["res/Porsche911.obj"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

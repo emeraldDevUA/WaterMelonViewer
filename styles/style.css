@@ -117,10 +117,11 @@ h3 {
    margin-top: 12px;
    margin-bottom: 4px;
    font-size: 14px;
+
  }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 #app {
@@ -140,6 +141,28 @@ h3 {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+#model_properties{
+  position: absolute;
+  right: 1%;
+  bottom: 2%;
+}
+
+#model_properties_container{
+  width: 8%;
+  height: 2%;
+  position: absolute;
+  right: 5%;
+  bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  font-size: 10pt;
+
+}
+h4{
+  margin-bottom: 0.5em;
+  margin-top: 0;
 }
 
 #settings_container {
