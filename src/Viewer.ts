@@ -15,8 +15,8 @@ type LightPosition = {
 type DirectionalLightConfig = {
     color: number;
     intensity: number;
-    position: LightPosition;
     castShadow: boolean;
+    position: LightPosition;
 };
 
 type LightingConfig = {
@@ -31,7 +31,8 @@ export class Viewer {
 
     private gridHelper: THREE.GridHelper;
     private axesHelper: THREE.AxesHelper;
-    private lighting_configurations: Array<THREE.Light> = [];
+    private lighting_configurations: Array<THREE.Object3D> = [];
+
 
     constructor(private options: typeof sceneOptions) {
         this.scene = new THREE.Scene()
@@ -143,6 +144,8 @@ export class Viewer {
             this.scene.add(configuration);
         })
 
+
+
     }
 
     private init() {
@@ -188,6 +191,11 @@ export class Viewer {
             light.position.set(config.position.x, config.position.y, config.position.z);
             light.castShadow = config.castShadow;
             this.lighting_configurations.push(light);
+
+            if (this.options.lighting.showHelpers){
+                const lightHelper = new THREE.DirectionalLightHelper(light, 5)
+                this.lighting_configurations.push(lightHelper);
+            }
         }
     }
 

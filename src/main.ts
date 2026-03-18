@@ -211,6 +211,10 @@ const light_config3 = document.getElementById("lighting_config3")!;
 const light_config4 = document.getElementById("lighting_config4")!;
 const light_config5 = document.getElementById("lighting_config5")!;
 
+const shadow_checkbox = document.getElementById("shadowsEnabled")! as HTMLInputElement;
+const light_gizmo_checkbox = document.getElementById("showLightGizmo")! as HTMLInputElement;
+
+
 const lighting_config_buttons: HTMLElement[] = [light_config1, light_config2, light_config3, light_config4, light_config5];
 
 const background_color = document.getElementById("backgroundColor")!;
@@ -256,32 +260,76 @@ model_properties.addEventListener("click", () => {
 light_config1.addEventListener("click", () => {
     lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
     light_config1.classList.toggle("active");
+
+    //Overcast / soft daylight
+    //Flat, shadowless scene — overcast sky, indoor ambient, or neutral studio lighting.
+    sceneOptions.lighting.DirectionalLight = [
+        { color: 0xe8f0ff, intensity: 1.0,
+            position: { x: 0,   y: 80, z: 20 }, castShadow: false },
+        { color: 0xfff4e0, intensity: 0.4,
+            position: { x: 0,   y: -20, z: 0 }, castShadow: false },
+    ]
     viewer.setSettings(); // update your scene helpers
 });
 
 light_config2.addEventListener("click", () => {
     lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
     light_config2.classList.toggle("active");
+
+    //Golden hour / sunset
+    // Low, warm key light from one side with a deep blue-violet fill from the opposite horizon.
+    sceneOptions.lighting.DirectionalLight = [
+        { color: 0xff8c30, intensity: 1.2,
+            position: { x: 60,  y: 10, z: -20 }, castShadow: true },
+        { color: 0x3a3a7a, intensity: 0.35,
+            position: { x: -60, y: 15, z:  20 }, castShadow: false },
+    ]
     viewer.setSettings(); // update your scene helpers
 });
 
 light_config3.addEventListener("click", () => {
     lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
     light_config3.classList.toggle("active");
+
+    //Night / moonlit
+    // Dim, desaturated blue-white key with minimal fill — deep shadows, cool atmosphere.
+    sceneOptions.lighting.DirectionalLight = [
+        { color: 0xc8d8f8, intensity: 0.3,
+            position: { x: -20, y: 60, z: 30 }, castShadow: true },
+        { color: 0x101030, intensity: 0.1,
+            position: { x:  20, y: -10, z: -10 }, castShadow: false },
+    ]
     viewer.setSettings(); // update your scene helpers
 });
 
 light_config4.addEventListener("click", () => {
     lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
     light_config4.classList.toggle("active");
-    viewer.setSettings(); // update your scene helpers
-});
-light_config5.addEventListener("click", () => {
-    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
-    light_config5.classList.toggle("active");
+
+    //Three-point studio
+    // Classic photography / product-shot rig: bright key, softer fill opposite, and a rim from behind to separate subject from background.
+    sceneOptions.lighting.DirectionalLight = [
+        { color: 0xffffff, intensity: 1.0,
+            position: { x: -40, y: 50, z:  30 }, castShadow: true  },
+        { color: 0xd0e8ff, intensity: 0.4,
+            position: { x:  40, y: 30, z:  30 }, castShadow: false },
+        { color: 0xffe8d0, intensity: 0.6,
+            position: { x:   0, y: 20, z: -60 }, castShadow: false },
+    ]
     viewer.setSettings(); // update your scene helpers
 });
 
+light_config5.addEventListener("click", () => {
+    lighting_config_buttons.forEach(callback => {callback.classList.remove("active");});
+    light_config5.classList.toggle("active");
+
+    sceneOptions.lighting.DirectionalLight = [
+        { color: 0xffffff, intensity: 0.8, position: {x:-30, y:50, z:0}, castShadow: true },
+        { color: 0xff0000, intensity: 0.5, position: {x:30,  y:20, z:0}, castShadow: true },
+    ]
+
+    viewer.setSettings(); // update your scene helpers
+});
 
 light_menu.addEventListener("click", () => {
     light_menu.classList.toggle("active");
@@ -303,12 +351,16 @@ showAxesCheckbox.addEventListener("change", () => {
     viewer.setSettings(); // update your scene helpers
 });
 
-
-
 apply_setting_button.addEventListener("click", () => {
     viewer.setSettings();
 });
 
+
+
+light_gizmo_checkbox.addEventListener("change", () => {
+    sceneOptions.lighting.showHelpers = light_gizmo_checkbox.checked;
+    viewer.setSettings(); // update your scene helpers
+});
 
 vertex_button.addEventListener("click", () => {
     vertex_button.classList.toggle("active");

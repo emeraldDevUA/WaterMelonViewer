@@ -5,6 +5,7 @@ export const sceneOptions = {
         backgroundColor: 0x000000,
     },
     lighting: {
+        showHelpers: false,
         DirectionalLight: [
             { color: 0xffffff, intensity: 0.8, position: {x:-30, y:50, z:0}, castShadow: true },
             { color: 0xff0000, intensity: 0.5, position: {x:30,  y:20, z:0}, castShadow: false },
@@ -16,7 +17,6 @@ export const sceneOptions = {
     camera: {
         autoRotate: false,
         autoRotateSpeed: 1,
-
     },
     debug: {
         grid: {
