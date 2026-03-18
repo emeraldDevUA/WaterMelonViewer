@@ -5,13 +5,29 @@
   "version": "0.0.1",
   "description": "This is our first extension, so Hello world!",
 
-  "permissions": ["notifications", "storage", "downloads", "sidePanel"],
+  "permissions": ["notifications", "storage", "downloads", "sidePanel", "activeTab"],
 
+  "action": {
+    "default_popup": "basic_toggle.html",
+    "default_icon": "public/vite.svg"
+  },
 
   "web_accessible_resources": [
     {
       "resources": ["res/Porsche911.obj"],
       "matches": ["<all_urls>"]
     }
+  ],
+
+  "background": {
+    "service_worker": "src/chrome-plugin/backround.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "ts": ["src/main.ts", "src/MeshData.ts","src/ModelAdapter.ts", "src/Viewer.ts", "src/SceneOptions.ts"]
+    }
   ]
+  
 }
