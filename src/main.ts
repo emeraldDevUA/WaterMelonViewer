@@ -7,6 +7,7 @@ import {loadMesh} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
 
 
+
 // const renderer = new THREE.WebGLRenderer()
 // renderer.shadowMap.enabled = true
 // renderer.setPixelRatio(devicePixelRatio)

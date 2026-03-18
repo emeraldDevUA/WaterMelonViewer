@@ -5,10 +5,11 @@
   "version": "0.0.1",
   "description": "This is our first extension, so Hello world!",
 
-  "permissions": ["notifications", "storage", "downloads", "sidePanel", "activeTab"],
+  "permissions": ["notifications", "storage", "downloads", "sidePanel", "activeTab", "scripting"],
+
 
   "action": {
-    "default_popup": "basic_toggle.html",
+    "default_popup": "plugin_popup.html",
     "default_icon": "public/vite.svg"
   },
 
@@ -20,13 +21,13 @@
   ],
 
   "background": {
-    "service_worker": "src/chrome-plugin/backround.js"
+    "service_worker": "src/chrome-plugin/background.js"
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "ts": ["src/main.ts", "src/MeshData.ts","src/ModelAdapter.ts", "src/Viewer.ts", "src/SceneOptions.ts"]
+      "js": ["src/chrome-plugin/action_processor.js"]
     }
   ]
   
