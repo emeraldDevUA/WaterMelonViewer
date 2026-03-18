@@ -132,8 +132,34 @@ sphereMesh.position.set(0, 0, -5)
 
 
 ///////////////// import 3d models /////////////////
+let modelUrl: string;
+let model: THREE.Object3D;
+const viewer = new Viewer(sceneOptions);
+
+const renderer = viewer.getRender();
+const canvas = renderer.domElement; // ← this is the canvas
+
+viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
+viewer.setSettings();
+
+
+canvas.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
+
+// 2. On drop, grab the file and create a local object URL
 // @ts-ignore
-const modelUrl = new URL('../res/Porsche911.obj', import.meta.url);
+canvas.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer!.files[0];
+    if (!file) return;
+    modelUrl = URL.createObjectURL(file);
+    console.log(modelUrl)
+    //@ts-ignore
+    model = await loadMesh(modelUrl, file.name, import.meta.url);
+    viewer.addMesh(model);
+    model.scale.set(1, 1, 1);
+});
 
 ///////////////// gui /////////////////
 // const gui = new dat.GUI();
@@ -172,21 +198,6 @@ const modelUrl = new URL('../res/Porsche911.obj', import.meta.url);
 //     renderer.setSize(window.innerWidth, window.innerHeight)
 // })
 
-const viewer = new Viewer(sceneOptions);
-
-// viewer.addMesh(sphereMesh);
-// viewer.addMesh(boxMesh);
-// viewer.addMesh(directionalLight);
-// viewer.addMesh(dLightHelper)
-
-
-// @ts-ignore
-const model = await loadMesh("res/Porsche911.obj", import.meta.url);
-model.scale.set(1, 1, 1);
-
-viewer.addMesh(model);
-viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
-viewer.setSettings();
 
 // @ts-ignore
 let info: MeshInfo | GroupInfo;
@@ -355,7 +366,6 @@ showAxesCheckbox.addEventListener("change", () => {
 apply_setting_button.addEventListener("click", () => {
     viewer.setSettings();
 });
-
 
 
 light_gizmo_checkbox.addEventListener("change", () => {

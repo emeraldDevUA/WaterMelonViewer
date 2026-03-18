@@ -17,6 +17,7 @@ import {
     BufferGeometry,
     Object3DEventMap
 } from "three";
+import * as THREE from "three";
 
 
 const loaderMap = {
@@ -48,9 +49,9 @@ function getLoader(ext: string) {
 }
 
 
-export function loadMesh(filePath: string): Promise<Mesh | Group> {
+export function loadMesh(filePath: string, file_name:string): Promise<Mesh | Group> {
 
-    const ext = getExtension(filePath);
+    const ext = getExtension(file_name);
 
     if (!ext) {
         throw new Error("Cannot determine file extension");
@@ -82,7 +83,11 @@ export function loadMesh(filePath: string): Promise<Mesh | Group> {
                 if (result instanceof BufferGeometry) {
                     const mesh = new Mesh(
                         result,
-                        new MeshStandardMaterial({ color: 0xaaaaaa })
+                        new MeshStandardMaterial({
+                            color: 0xaaaaaa,
+                            side: THREE.FrontSide,
+
+                        })
                     );
                     resolve(mesh);
                     return;

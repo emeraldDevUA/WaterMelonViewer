@@ -179,6 +179,10 @@ export class Viewer {
         this.renderer.setSize(width, height);
     }
 
+    public getRender(){
+        return this.renderer;
+    }
+
     private parseLighting(lighting: LightingConfig): void {
         const dirLights = lighting.DirectionalLight
             ? Array.isArray(lighting.DirectionalLight)
