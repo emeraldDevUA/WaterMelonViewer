@@ -161,6 +161,8 @@ canvas.addEventListener('drop', async (e) => {
     model.scale.set(1, 1, 1);
 });
 
+
+
 ///////////////// gui /////////////////
 // const gui = new dat.GUI();
 // const options = {

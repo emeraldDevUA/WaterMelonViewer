@@ -27,7 +27,9 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/chrome-plugin/action_processor.js"]
+      "js": ["src/chrome-plugin/action_processor.js"],
+      "run_at": "document_start"
+
     }
   ]
   
