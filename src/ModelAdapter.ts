@@ -99,12 +99,31 @@ export function loadMesh(filePath: string, file_name:string): Promise<Mesh | Gro
                     return;
                 }
 
-                resolve(result);
-
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject(new Error(`Loader returned empty result for ${file_name}`));
+                }
             },
 
             undefined, (error: any) => reject(error)
         );
     });
 
+}
+
+// @ts-ignore
+export async function loadOBJ(input: File | Blob | ArrayBuffer | string): Promise<THREE.Group> {
+    let text: string;
+
+    if (typeof input === "string") {
+        text = input;
+    } else if (input instanceof ArrayBuffer) {
+        text = new TextDecoder().decode(input);
+    } else {
+        text = await input.text();
+    }
+
+    const loader = new OBJLoader();
+    return loader.parse(text);
 }

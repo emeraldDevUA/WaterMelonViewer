@@ -9,14 +9,17 @@
 
 
   "action": {
-    "default_popup": "plugin_popup.html",
     "default_icon": "public/logo_no_background.png"
   },
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+
 
   "web_accessible_resources": [
     {
       "resources": ["res/Porsche911.obj"],
-      "matches": ["<all_urls>"]
+      "matches": ["chrome-extension://*/*"]
     }
   ],
 
@@ -26,11 +29,12 @@
 
   "content_scripts": [
     {
+      "run_at": "document_start",
       "matches": ["<all_urls>"],
-      "js": ["src/chrome-plugin/action_processor.js"],
-      "run_at": "document_start"
-
+      "js": ["src/chrome-plugin/action_processor.js"]
     }
   ]
-  
+
+
+
 }

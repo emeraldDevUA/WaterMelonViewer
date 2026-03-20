@@ -3,7 +3,7 @@ import * as THREE from 'three'
 // import * as SkeletonUtiols from 'three/examples/jsm/utils/SkeletonUtils.js'
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
-import {loadMesh} from "./ModelAdapter";
+import {loadMesh, loadOBJ} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
 
 
@@ -147,6 +147,76 @@ canvas.addEventListener('dragover', (e) => {
     e.preventDefault();
 });
 
+
+const MIME: Record<string, string> = {
+    obj:  'text/plain',
+    glb:  'model/gltf-binary',
+    gltf: 'model/gltf+json',
+    fbx:  'application/octet-stream',
+    stl:  'application/octet-stream',
+};
+const DB_NAME = "fileDB";
+const STORE_NAME = "files";
+
+function openDB() {
+    // @ts-ignore
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+
+        request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: "id" });
+            }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+async function getFile() {
+    // @ts-ignore
+    const db = await openDB();
+    // @ts-ignore
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readonly");
+        const store = tx.objectStore(STORE_NAME);
+
+        const request = store.get("droppedFile");
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// @ts-ignore
+(async () => {
+    console.log("STEP 1: start");
+
+    const data = await getFile();
+    console.log("STEP 2: got data", data);
+
+    if (!data) return;
+
+    const file = data.file;
+    console.log("STEP 3: file ready", file);
+
+    try {
+        console.log("STEP 4: loading OBJ");
+
+        const model = await loadOBJ(file);
+
+        console.log("STEP 5: model loaded", model);
+
+        model.scale.set(1, 1, 1);
+
+        viewer.addMesh(model);
+
+        console.log("STEP 6: added to viewer");
+    } catch (err) {
+        console.error("OBJ LOAD FAILED:", err);
+    }
+})();
 // 2. On drop, grab the file and create a local object URL
 // @ts-ignore
 canvas.addEventListener('drop', async (e) => {
