@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import {sceneOptions} from "./SceneOptions";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import {VertexNormalsHelper} from "three/examples/jsm/helpers/VertexNormalsHelper.js";
+import {AxesHelper, GridHelper} from "three";
 
 // import {Group} from "three";
 
@@ -26,13 +27,14 @@ type LightingConfig = {
 export class Viewer {
     private readonly scene: THREE.Scene
     private readonly camera: THREE.PerspectiveCamera
-    private renderer: THREE.WebGLRenderer
+    private readonly renderer: THREE.WebGLRenderer
     private controls: OrbitControls
 
     private gridHelper: THREE.GridHelper;
     private axesHelper: THREE.AxesHelper;
     private lighting_configurations: Array<THREE.Object3D> = [];
 
+    private skyBox: THREE.CubeTexture;
 
     constructor(private options: typeof sceneOptions) {
         this.scene = new THREE.Scene()
@@ -103,7 +105,6 @@ export class Viewer {
                 } else {
 
                     if (meshData.pointsHelper) {
-
                         mesh.remove(meshData.pointsHelper);
                         meshData.pointsHelper.material.dispose();
                         meshData.pointsHelper = null;
@@ -115,7 +116,6 @@ export class Viewer {
         });
 
         if (debugContext.grid.showGrid == true) {
-
             if (this.gridHelper == null) {
                 this.gridHelper = new THREE.GridHelper(debugContext.grid.gridSize)
             }
@@ -132,7 +132,22 @@ export class Viewer {
         } else {
             this.scene.remove(this.axesHelper)
         }
-        this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
+
+        if(this.options.renderer.skybox.enabled) {
+
+            if(this.skyBox == null) {
+                const loader = new THREE.CubeTextureLoader();
+                this.skyBox = loader.load([
+                    'res/SkyBox/pos_x.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
+                    'res/SkyBox/pos_y.jpg', 'res/SkyBox/neg_y.jpg', // pos-y, neg-y
+                    'res/SkyBox/pos_z.jpg', 'res/SkyBox/neg_z.jpg'  // pos-z, neg-z
+                ]);
+            }
+            this.scene.background = this.skyBox;
+            console.log(this.skyBox);
+        }else {
+            this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
+        }
 
         for (const light of this.lighting_configurations) {
             this.scene.remove(light);
@@ -143,8 +158,6 @@ export class Viewer {
         this.lighting_configurations.forEach(configuration => {
             this.scene.add(configuration);
         })
-
-
 
     }
 
@@ -203,4 +216,13 @@ export class Viewer {
         }
     }
 
+    public updateGrid(){
+        this.scene.remove(this.gridHelper)
+        this.gridHelper = new GridHelper(this.options.debug.grid.gridSize);
+    }
+
+    public updateAxes() {
+        this.scene.remove(this.axesHelper)
+        this.axesHelper = new AxesHelper(this.options.debug.axes.axisSize);
+    }
 }

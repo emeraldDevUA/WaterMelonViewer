@@ -39,7 +39,7 @@ button {
     cursor: pointer;
     margin-bottom: 8px;
     text-align: left;
-    border: 0.5px solid var(--border);
+    border: 1px solid var(--border);
     background: var(--bg-surface);
     color: var(--text-muted);
     letter-spacing: 0.01em;

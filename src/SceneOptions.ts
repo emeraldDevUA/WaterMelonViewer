@@ -3,6 +3,10 @@ export const sceneOptions = {
         exposure: 1.2,
         toneMapping: true,
         backgroundColor: 0x000000,
+        skybox:{
+            skyboxType: "Default",
+            enabled: false
+        }
     },
     lighting: {
         showHelpers: false,
@@ -21,7 +25,7 @@ export const sceneOptions = {
     debug: {
         grid: {
             showGrid: false,
-            gridSize: 30,
+            gridSize: 50,
             gridDivisions: 30,
             gridColor1: 0x444444,
             gridColor2: 0x888888

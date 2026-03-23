@@ -1,49 +1,10 @@
 import * as THREE from 'three'
 // import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
-// import * as SkeletonUtiols from 'three/examples/jsm/utils/SkeletonUtils.js'
+// import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
 import {loadMesh, loadOBJ} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
-
-
-
-// const renderer = new THREE.WebGLRenderer()
-// renderer.shadowMap.enabled = true
-// renderer.setPixelRatio(devicePixelRatio)
-// renderer.setSize(window.innerWidth, window.innerHeight)
-// // renderer.setClearColor('#a3a3a3')
-// document.body.appendChild(renderer.domElement)
-//
-// const scene = new THREE.Scene()
-//
-// const camera = new THREE.PerspectiveCamera(
-//     70,
-//     window.innerWidth / window.innerHeight,
-//     0.1,
-//     1000,
-// )
-//
-// const orbit = new OrbitControls(camera, renderer.domElement)
-//
-// camera.position.set(10, 10, 10)
-// orbit.update()
-//
-//
-// ///////////////// axs helper /////////////////
-// // const axesHelper = new THREE.AxesHelper(3)
-// // scene.add(axesHelper)
-//
-//
-// ///////////////// grid helper /////////////////
-// const gridHelper = new THREE.GridHelper(30)
-// scene.add(gridHelper)
-
-
-///////////////// ambient light /////////////////
-// const ambientLight = new THREE.AmbientLight('#ffffff', 0.8)
-// ambientLight.position.set(0, 20, 0)
-// scene.add(ambientLight)
 
 
 ///////////////// directional light /////////////////
@@ -54,7 +15,6 @@ directionalLight.castShadow = true
 directionalLight.shadow.camera.bottom = -30
 
 ///////////////// dr-light helper /////////////////
-const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5)
 //scene.add(dLightHelper)
 
 ///////////////// dr-light shadow helper /////////////////
@@ -86,50 +46,10 @@ const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5)
 // const cubeTextureLoader = new THREE.CubeTextureLoader()
 // scene.background = cubeTextureLoader.load([img, img, img, img, img, img])
 
-
-///////////////// plane /////////////////
-// const plane = new THREE.Mesh(
-//     new THREE.PlaneGeometry(30, 30),
-//     new THREE.MeshStandardMaterial({
-//         color: 0xFFFFFF,
-//         side: THREE.DoubleSide
-//     }))
-// scene.add(plane)
-// plane.rotation.x = -0.5 * Math.PI
-// plane.receiveShadow = true
-
-
-///////////////// box /////////////////
-const boxMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(2,2,2),
-    new THREE.MeshBasicMaterial({
-        color: 0x00ff00,
-        side: THREE.DoubleSide,
-        wireframe: false
-    })
-)
-boxMesh.position.set(0, 0, 5)
-// scene.add(boxMesh)
-
-
-///////////////// sphere /////////////////
-const sphereMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(2),
-    new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        side: THREE.DoubleSide,
-        wireframe: false
-    })
-)
-sphereMesh.position.set(0, 0, -5)
-// scene.add(sphereMesh)
-
-
 ///////////////// renderer color settings /////////////////
 // renderer.outputEncoding = THREE.sRGBEncoding
 // renderer.toneMapping = THREE.ACESFilmicToneMapping
 // renderer.toneMappingExposure = 1.5
-
 
 ///////////////// import 3d models /////////////////
 let modelUrl: string;
@@ -139,7 +59,7 @@ const viewer = new Viewer(sceneOptions);
 const renderer = viewer.getRender();
 const canvas = renderer.domElement; // ← this is the canvas
 
-viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
+// viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
 viewer.setSettings();
 
 
@@ -160,7 +80,7 @@ const STORE_NAME = "files";
 
 function openDB() {
     // @ts-ignore
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve:any, reject:any) => {
         const request = indexedDB.open(DB_NAME, 1);
 
         request.onupgradeneeded = () => {
@@ -178,7 +98,7 @@ async function getFile() {
     // @ts-ignore
     const db = await openDB();
     // @ts-ignore
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
         const tx = db.transaction(STORE_NAME, "readonly");
         const store = tx.objectStore(STORE_NAME);
 
@@ -217,7 +137,7 @@ async function getFile() {
         console.error("OBJ LOAD FAILED:", err);
     }
 })();
-// 2. On drop, grab the file and create a local object URL
+
 // @ts-ignore
 canvas.addEventListener('drop', async (e) => {
     e.preventDefault();
@@ -274,34 +194,36 @@ canvas.addEventListener('drop', async (e) => {
 // @ts-ignore
 let info: MeshInfo | GroupInfo;
 
-const menu_button = document.getElementById("main_menu")!;
-const light_menu = document.getElementById("light_menu")!;
-const model_properties = document.getElementById("model_properties")!;
+const menu_button: HTMLElement = document.getElementById("main_menu")!;
+const light_menu: HTMLElement = document.getElementById("light_menu")!;
+const model_properties: HTMLElement = document.getElementById("model_properties")!;
 
+const apply_setting_button: HTMLElement = document.getElementById("save")!;
 
-const apply_setting_button = document.getElementById("save")!;
+const main_settings_container: HTMLElement = document.getElementById("settings_container")!;
+const lighting_settings_container: HTMLElement = document.getElementById("lighting_container")!;
+const model_properties_container: HTMLElement = document.getElementById("model_properties_container")!;
 
-const main_settings_container = document.getElementById("settings_container")!;
-const lighting_settings_container = document.getElementById("lighting_container")!;
-const model_properties_container = document.getElementById("model_properties_container")!;
+const vertex_button: HTMLElement = document.getElementById("vertices")!;
+const edges_button: HTMLElement = document.getElementById("edges")!;
+const normals_button: HTMLElement = document.getElementById("normals")!;
 
-const vertex_button = document.getElementById("vertices")!;
-const edges_button = document.getElementById("edges")!;
-const normals_button = document.getElementById("normals")!;
-
-const light_config1 = document.getElementById("lighting_config1")!;
-const light_config2 = document.getElementById("lighting_config2")!;
-const light_config3 = document.getElementById("lighting_config3")!;
-const light_config4 = document.getElementById("lighting_config4")!;
-const light_config5 = document.getElementById("lighting_config5")!;
+const light_config1: HTMLElement = document.getElementById("lighting_config1")!;
+const light_config2: HTMLElement = document.getElementById("lighting_config2")!;
+const light_config3: HTMLElement = document.getElementById("lighting_config3")!;
+const light_config4: HTMLElement = document.getElementById("lighting_config4")!;
+const light_config5: HTMLElement = document.getElementById("lighting_config5")!;
+const lighting_config_buttons: HTMLElement[] = [light_config1, light_config2, light_config3, light_config4, light_config5];
 
 const shadow_checkbox = document.getElementById("shadowsEnabled")! as HTMLInputElement;
 const light_gizmo_checkbox = document.getElementById("showLightGizmo")! as HTMLInputElement;
 
+const background_color: HTMLElement = document.getElementById("backgroundColor")!;
 
-const lighting_config_buttons: HTMLElement[] = [light_config1, light_config2, light_config3, light_config4, light_config5];
-
-const background_color = document.getElementById("backgroundColor")!;
+const showGridCheckbox = document.getElementById("showGrid")! as HTMLInputElement;
+const gridSizeInput = document.getElementById("grid_size")!  as HTMLInputElement;
+const showAxesCheckbox = document.getElementById("showAxes")! as HTMLInputElement;
+const axesSizeInput = document.getElementById("axes_size")!  as HTMLInputElement;
 
 background_color.addEventListener("input", (event) => {
     const hex = (event.target as HTMLInputElement).value;
@@ -319,9 +241,9 @@ const ui = {
     faces: document.getElementById("face_count")!,
     normals: document.getElementById("has_normals")!
 };
+
 model_properties.addEventListener("click", () => {
     model_properties_container.classList.toggle("hidden");
-
     function setProperties(vertexCount: number, faceCount: number, hasNormals: boolean) {
         ui.vertices.textContent = String(vertexCount);
         ui.faces.textContent = String(faceCount);
@@ -348,10 +270,8 @@ light_config1.addEventListener("click", () => {
     //Overcast / soft daylight
     //Flat, shadowless scene — overcast sky, indoor ambient, or neutral studio lighting.
     sceneOptions.lighting.DirectionalLight = [
-        { color: 0xe8f0ff, intensity: 1.0,
-            position: { x: 0,   y: 80, z: 20 }, castShadow: false },
-        { color: 0xfff4e0, intensity: 0.4,
-            position: { x: 0,   y: -20, z: 0 }, castShadow: false },
+        { color: 0xe8f0ff, intensity: 1.0, position: { x: 0,   y: 80, z: 20 }, castShadow: false },
+        { color: 0xfff4e0, intensity: 0.4, position: { x: 0,   y: -20, z: 0 }, castShadow: false },
     ]
     viewer.setSettings(); // update your scene helpers
 });
@@ -363,10 +283,8 @@ light_config2.addEventListener("click", () => {
     //Golden hour / sunset
     // Low, warm key light from one side with a deep blue-violet fill from the opposite horizon.
     sceneOptions.lighting.DirectionalLight = [
-        { color: 0xff8c30, intensity: 1.2,
-            position: { x: 60,  y: 10, z: -20 }, castShadow: true },
-        { color: 0x3a3a7a, intensity: 0.35,
-            position: { x: -60, y: 15, z:  20 }, castShadow: false },
+        { color: 0xff8c30, intensity: 1.2, position: { x: 60,  y: 10, z: -20 }, castShadow: true },
+        { color: 0x3a3a7a, intensity: 0.35, position: { x: -60, y: 15, z:  20 }, castShadow: false },
     ]
     viewer.setSettings(); // update your scene helpers
 });
@@ -378,10 +296,8 @@ light_config3.addEventListener("click", () => {
     //Night / moonlit
     // Dim, desaturated blue-white key with minimal fill — deep shadows, cool atmosphere.
     sceneOptions.lighting.DirectionalLight = [
-        { color: 0xc8d8f8, intensity: 0.3,
-            position: { x: -20, y: 60, z: 30 }, castShadow: true },
-        { color: 0x101030, intensity: 0.1,
-            position: { x:  20, y: -10, z: -10 }, castShadow: false },
+        { color: 0xc8d8f8, intensity: 0.3, position: { x: -20, y: 60, z: 30 }, castShadow: true },
+        { color: 0x101030, intensity: 0.1, position: { x:  20, y: -10, z: -10 }, castShadow: false },
     ]
     viewer.setSettings(); // update your scene helpers
 });
@@ -393,12 +309,9 @@ light_config4.addEventListener("click", () => {
     //Three-point studio
     // Classic photography / product-shot rig: bright key, softer fill opposite, and a rim from behind to separate subject from background.
     sceneOptions.lighting.DirectionalLight = [
-        { color: 0xffffff, intensity: 1.0,
-            position: { x: -40, y: 50, z:  30 }, castShadow: true  },
-        { color: 0xd0e8ff, intensity: 0.4,
-            position: { x:  40, y: 30, z:  30 }, castShadow: false },
-        { color: 0xffe8d0, intensity: 0.6,
-            position: { x:   0, y: 20, z: -60 }, castShadow: false },
+        { color: 0xffffff, intensity: 1.0, position: { x: -40, y: 50, z:  30 }, castShadow: true  },
+        { color: 0xd0e8ff, intensity: 0.4, position: { x:  40, y: 30, z:  30 }, castShadow: false },
+        { color: 0xffe8d0, intensity: 0.6, position: { x:   0, y: 20, z: -60 }, castShadow: false },
     ]
     viewer.setSettings(); // update your scene helpers
 });
@@ -420,13 +333,15 @@ light_menu.addEventListener("click", () => {
     lighting_settings_container.classList.toggle("hidden");
 });
 
-
-const showGridCheckbox = document.getElementById("showGrid") as HTMLInputElement;
-const showAxesCheckbox = document.getElementById("showAxes") as HTMLInputElement;
-
 // Listen for changes
 showGridCheckbox.addEventListener("change", () => {
     sceneOptions.debug.grid.showGrid = showGridCheckbox.checked;
+    viewer.setSettings(); // update your scene helpers
+});
+
+gridSizeInput.addEventListener("change", () => {
+    sceneOptions.debug.grid.gridSize = +gridSizeInput.value
+    viewer.updateGrid();
     viewer.setSettings(); // update your scene helpers
 });
 
@@ -435,14 +350,23 @@ showAxesCheckbox.addEventListener("change", () => {
     viewer.setSettings(); // update your scene helpers
 });
 
+axesSizeInput.addEventListener("change", () => {
+    sceneOptions.debug.axes.axisSize = +axesSizeInput.value
+    viewer.updateAxes();
+    viewer.setSettings(); // update your scene helpers
+});
+
+
 apply_setting_button.addEventListener("click", () => {
     viewer.setSettings();
 });
 
-
 light_gizmo_checkbox.addEventListener("change", () => {
     sceneOptions.lighting.showHelpers = light_gizmo_checkbox.checked;
     viewer.setSettings(); // update your scene helpers
+});
+
+shadow_checkbox.addEventListener("change", () => {
 });
 
 vertex_button.addEventListener("click", () => {
