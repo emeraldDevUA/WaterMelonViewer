@@ -225,6 +225,10 @@ const gridSizeInput = document.getElementById("grid_size")!  as HTMLInputElement
 const showAxesCheckbox = document.getElementById("showAxes")! as HTMLInputElement;
 const axesSizeInput = document.getElementById("axes_size")!  as HTMLInputElement;
 
+const enableSkyBoxCheckbox = document.getElementById("enableSkyBox")! as HTMLInputElement;
+
+const scene_div = document.getElementById("scene_elements")!;
+
 background_color.addEventListener("input", (event) => {
     const hex = (event.target as HTMLInputElement).value;
     sceneOptions.renderer.backgroundColor = parseInt(hex.replace("#", ""), 16);
@@ -234,6 +238,23 @@ background_color.addEventListener("input", (event) => {
 menu_button.addEventListener("click", () => {
     menu_button.classList.toggle("active");
     main_settings_container.classList.toggle("hidden");
+
+    const { meshNames, lightNames }= viewer.getSceneInfo();
+    for (const meshName of meshNames) {
+        let div = document.createElement("div");
+        div.className = "scene_element";
+        div.textContent = meshName;
+        scene_div.append(div)
+    }
+    // @ts-ignore
+    for (const lightName of lightNames) {
+        let div = document.createElement("div");
+        div.className = "scene_element";
+        div.textContent = lightName;
+        scene_div.append(div)
+    }
+
+
 });
 
 const ui = {
@@ -356,10 +377,9 @@ axesSizeInput.addEventListener("change", () => {
     viewer.setSettings(); // update your scene helpers
 });
 
-
-apply_setting_button.addEventListener("click", () => {
-    viewer.setSettings();
-});
+// apply_setting_button.addEventListener("click", () => {
+//     viewer.setSettings();
+// });
 
 light_gizmo_checkbox.addEventListener("change", () => {
     sceneOptions.lighting.showHelpers = light_gizmo_checkbox.checked;
@@ -368,6 +388,12 @@ light_gizmo_checkbox.addEventListener("change", () => {
 
 shadow_checkbox.addEventListener("change", () => {
 });
+
+enableSkyBoxCheckbox.addEventListener("change", () => {
+    sceneOptions.renderer.skybox.enabled = enableSkyBoxCheckbox.checked;
+    viewer.setSettings(); // update your scene helpers
+});
+
 
 vertex_button.addEventListener("click", () => {
     vertex_button.classList.toggle("active");

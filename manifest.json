@@ -25,16 +25,7 @@
 
   "background": {
     "service_worker": "src/chrome-plugin/background.js"
-  },
-
-  "content_scripts": [
-    {
-      "run_at": "document_start",
-      "matches": ["<all_urls>"],
-      "js": ["src/chrome-plugin/sidepanel.js"]
-    }
-  ]
-
+  }
 
 
 }

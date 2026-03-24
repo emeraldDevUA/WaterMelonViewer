@@ -138,13 +138,16 @@ export class Viewer {
             if(this.skyBox == null) {
                 const loader = new THREE.CubeTextureLoader();
                 this.skyBox = loader.load([
-                    'res/SkyBox/pos_x.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
+                    // Why the fuck is it not working?
+                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
                     'res/SkyBox/pos_y.jpg', 'res/SkyBox/neg_y.jpg', // pos-y, neg-y
-                    'res/SkyBox/pos_z.jpg', 'res/SkyBox/neg_z.jpg'  // pos-z, neg-z
-                ]);
+                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/neg_z.jpg'  // pos-z, neg-z
+                ],  () => console.log("Skybox loaded"),
+                    undefined,
+                    (err) => console.error("Skybox failed:", err)
+                );
             }
             this.scene.background = this.skyBox;
-            console.log(this.skyBox);
         }else {
             this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
         }
@@ -224,5 +227,27 @@ export class Viewer {
     public updateAxes() {
         this.scene.remove(this.axesHelper)
         this.axesHelper = new AxesHelper(this.options.debug.axes.axisSize);
+    }
+
+    public getSceneInfo() {
+        let meshNames: string[] = [];
+        let lightNames: string[] = [];
+
+        this.scene.traverse((object) => {
+
+            if ((object as THREE.Mesh).isMesh) {
+                meshNames.push(object.name || "(unnamed mesh)");
+            }
+
+            if ((object as THREE.Light).isLight) {
+                lightNames.push(object.name || "(unnamed light)");
+            }
+
+        });
+
+        return {
+            meshNames,
+            lightNames
+        };
     }
 }

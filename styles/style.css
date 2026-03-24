@@ -152,6 +152,8 @@ button.active {
   color: var(--text-muted);
   border-radius: 0 0 8px 8px;
   font-family: inherit;
+  max-height: 50%;
+  overflow: auto;
 }
 
 #lighting_container {
@@ -258,4 +260,10 @@ button.active {
 .read-the-docs {
   color: var(--text-hint);
   font-size: 12px;
+}
+
+#main_menu{
+
+
+
 }
