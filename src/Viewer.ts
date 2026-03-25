@@ -139,9 +139,9 @@ export class Viewer {
                 const loader = new THREE.CubeTextureLoader();
                 this.skyBox = loader.load([
                     // Why the fuck is it not working?
-                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
+                    'res/SkyBox/pos_x.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
                     'res/SkyBox/pos_y.jpg', 'res/SkyBox/neg_y.jpg', // pos-y, neg-y
-                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/neg_z.jpg'  // pos-z, neg-z
+                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/pos_z.jpg'  // pos-z, neg-z
                 ],  () => console.log("Skybox loaded"),
                     undefined,
                     (err) => console.error("Skybox failed:", err)
@@ -236,11 +236,11 @@ export class Viewer {
         this.scene.traverse((object) => {
 
             if ((object as THREE.Mesh).isMesh) {
-                meshNames.push(object.name || "(unnamed mesh)");
+                meshNames.push(object.name || "Unnamed mesh");
             }
 
-            if ((object as THREE.Light).isLight) {
-                lightNames.push(object.name || "(unnamed light)");
+            if ((object as THREE.DirectionalLight).isLight) {
+                lightNames.push(object.name || "Directional light" );
             }
 
         });
@@ -249,5 +249,9 @@ export class Viewer {
             meshNames,
             lightNames
         };
+    }
+
+    clearScene() {
+        this.scene.clear();
     }
 }

@@ -198,7 +198,7 @@ const menu_button: HTMLElement = document.getElementById("main_menu")!;
 const light_menu: HTMLElement = document.getElementById("light_menu")!;
 const model_properties: HTMLElement = document.getElementById("model_properties")!;
 
-const apply_setting_button: HTMLElement = document.getElementById("save")!;
+const clear_btn: HTMLElement = document.getElementById("clear-btn")!;
 
 const main_settings_container: HTMLElement = document.getElementById("settings_container")!;
 const lighting_settings_container: HTMLElement = document.getElementById("lighting_container")!;
@@ -236,17 +236,21 @@ background_color.addEventListener("input", (event) => {
 });
 
 menu_button.addEventListener("click", () => {
+
     menu_button.classList.toggle("active");
     main_settings_container.classList.toggle("hidden");
 
-    const { meshNames, lightNames }= viewer.getSceneInfo();
+    scene_div.innerHTML = "";
+
+    const { meshNames, lightNames } = viewer.getSceneInfo();
+
     for (const meshName of meshNames) {
         let div = document.createElement("div");
         div.className = "scene_element";
         div.textContent = meshName;
         scene_div.append(div)
     }
-    // @ts-ignore
+
     for (const lightName of lightNames) {
         let div = document.createElement("div");
         div.className = "scene_element";
@@ -254,8 +258,13 @@ menu_button.addEventListener("click", () => {
         scene_div.append(div)
     }
 
-
 });
+clear_btn.addEventListener("click", () => {
+
+    scene_div.innerHTML = "";
+    viewer.clearScene();
+
+})
 
 const ui = {
     vertices: document.getElementById("vert_count")!,
@@ -377,9 +386,6 @@ axesSizeInput.addEventListener("change", () => {
     viewer.setSettings(); // update your scene helpers
 });
 
-// apply_setting_button.addEventListener("click", () => {
-//     viewer.setSettings();
-// });
 
 light_gizmo_checkbox.addEventListener("change", () => {
     sceneOptions.lighting.showHelpers = light_gizmo_checkbox.checked;

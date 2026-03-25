@@ -129,6 +129,7 @@ button.active {
 
 #ui {
   background-color: var(--bg-primary);
+  height: fit-content;
 }
 
 #btn_container {
