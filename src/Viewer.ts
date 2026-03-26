@@ -50,6 +50,12 @@ export class Viewer {
 
     public addMesh(mesh: THREE.Object3D) {
         this.scene.add(mesh)
+
+        this.fitCameraToMesh(mesh, this.camera, this.controls)
+    }
+
+    public removeMesh(model: THREE.Object3D) {
+        this.scene.remove(model);
     }
 
     public setSettings() {
@@ -174,10 +180,12 @@ export class Viewer {
         this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
         document.getElementById('app')?.appendChild(this.renderer.domElement)
         this.renderer.setAnimationLoop(this.animate)
+
     }
 
     private animate = (time: number) => {
         this.renderer.render(this.scene, this.camera)
+        //this.controls.rotateLeft( 1E-7*time)
     }
 
     public setFog(fog: THREE.Fog | THREE.FogExp2 | null) {
@@ -253,5 +261,38 @@ export class Viewer {
 
     clearScene() {
         this.scene.clear();
+    }
+
+    private fitCameraToMesh(
+        mesh: THREE.Object3D,
+        camera: THREE.PerspectiveCamera,
+        controls?: { target: THREE.Vector3; update: () => void }
+    ): void {
+        const box = new THREE.Box3().setFromObject(mesh)
+        const center = new THREE.Vector3()
+        const size = new THREE.Vector3()
+
+        box.getCenter(center)
+        box.getSize(size)
+
+        const maxDim = Math.max(size.x, size.y, size.z)
+        const fovRad = (camera.fov * Math.PI) / 180
+        const distance = (maxDim / 2) / Math.tan(fovRad / 2) * 1.5  // 1.5 = padding factor
+
+        const direction = camera.position.clone()
+            .sub(center)
+            .normalize()
+            .multiplyScalar(distance)
+
+        camera.position.copy(center).add(direction)
+        camera.near = distance / 100
+        camera.far = distance * 100
+        camera.lookAt(center)
+        camera.updateProjectionMatrix()
+
+        if (controls) {
+            controls.target.copy(center)
+            controls.update()
+        }
     }
 }

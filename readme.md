@@ -5,6 +5,7 @@
 As the default viewer from Windows store is reaching its end of life, 
 I decided to create a plugin for chrome that would enable viewing 3D models much like regular .pdf files.
 
+<img src="public/demo_1.jpg" style="width:80%"> <br>
 Currently implemented:
 
 - ### Lighting configurations
@@ -16,5 +17,4 @@ Currently implemented:
 - ### Edges
 
 
-![](public/demo_1.jpg)
 

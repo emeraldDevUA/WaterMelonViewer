@@ -5,14 +5,15 @@ import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
 import {loadMesh, loadOBJ} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
+import {getFile} from "./db-calls/index-db"
 
 
-///////////////// directional light /////////////////
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
-// scene.add(directionalLight)
-directionalLight.position.set(-30, 50, 0)
-directionalLight.castShadow = true
-directionalLight.shadow.camera.bottom = -30
+function recenterMesh(mesh: THREE.Object3D): void {
+    const box = new THREE.Box3().setFromObject(mesh)
+    const center = new THREE.Vector3()
+    box.getCenter(center)
+    mesh.position.set(-center.x, -center.y, -center.z)
+}
 
 ///////////////// dr-light helper /////////////////
 //scene.add(dLightHelper)
@@ -62,11 +63,9 @@ const canvas = renderer.domElement; // ← this is the canvas
 // viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
 viewer.setSettings();
 
-
 canvas.addEventListener('dragover', (e) => {
     e.preventDefault();
 });
-
 
 const MIME: Record<string, string> = {
     obj:  'text/plain',
@@ -75,39 +74,7 @@ const MIME: Record<string, string> = {
     fbx:  'application/octet-stream',
     stl:  'application/octet-stream',
 };
-const DB_NAME = "fileDB";
-const STORE_NAME = "files";
 
-function openDB() {
-    // @ts-ignore
-    return new Promise((resolve:any, reject:any) => {
-        const request = indexedDB.open(DB_NAME, 1);
-
-        request.onupgradeneeded = () => {
-            const db = request.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: "id" });
-            }
-        };
-
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
-async function getFile() {
-    // @ts-ignore
-    const db = await openDB();
-    // @ts-ignore
-    return new Promise((resolve: any, reject: any) => {
-        const tx = db.transaction(STORE_NAME, "readonly");
-        const store = tx.objectStore(STORE_NAME);
-
-        const request = store.get("droppedFile");
-
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
 
 // @ts-ignore
 (async () => {
@@ -148,6 +115,8 @@ canvas.addEventListener('drop', async (e) => {
     //@ts-ignore
     model = await loadMesh(modelUrl, file.name, import.meta.url);
     viewer.addMesh(model);
+
+    model.position.set(0, 0, 0);
     model.scale.set(1, 1, 1);
 });
 
@@ -199,6 +168,7 @@ const light_menu: HTMLElement = document.getElementById("light_menu")!;
 const model_properties: HTMLElement = document.getElementById("model_properties")!;
 
 const clear_btn: HTMLElement = document.getElementById("clear-btn")!;
+const recenter_btn: HTMLElement = document.getElementById("recenter-btn")!;
 
 const main_settings_container: HTMLElement = document.getElementById("settings_container")!;
 const lighting_settings_container: HTMLElement = document.getElementById("lighting_container")!;
@@ -263,6 +233,15 @@ clear_btn.addEventListener("click", () => {
 
     scene_div.innerHTML = "";
     viewer.clearScene();
+
+})
+
+recenter_btn.addEventListener("click", () => {
+
+    recenterMesh(model)
+
+    // viewer.removeMesh(model);
+    // viewer.addMesh(model);
 
 })
 
