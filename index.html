@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8"/>
+
     <link rel="stylesheet" href="styles/style.css"/>
-    <link rel="icon" type="image/svg+xml" href="/logo_no_background.png" />
+    <link rel="icon"  href="public/logo_no_background.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>water_melon_viewer</title>
 
@@ -70,7 +71,68 @@
 
             </svg>
           </button>
+
         </div>
+        <div class="settings-panel" id="panel-vertices">
+          <div class="panel-inner">
+            <div class="panel-title">Vertex settings</div>
+            <div class="row">
+              <label>Size</label>
+              <label><input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value"></label>
+              <span class="val">5</span></div>
+            <div class="row"><label>Color</label>
+              <label><input type="color" value="#4a90e2"></label>
+            </div>
+            <div class="row"><label>Shape</label>
+              <label>
+              <select><option>Circle</option>
+                <option>Square</option>
+                <option>Diamond</option>
+              </select>
+            </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-panel" id="panel-edges">
+          <div class="panel-inner">
+            <div class="panel-title">Edge settings</div>
+            <div class="row"><label>Width</label><label>
+              <input type="range" min="1" max="10" value="2" oninput="this.nextElementSibling.textContent=this.value">
+            </label><span class="val">2</span></div>
+            <div class="row"><label>Style</label>
+              <label>
+                <select><option>Solid</option><option>Dashed</option><option>Dotted</option></select>
+              </label>
+            </div>
+
+            <div class="row">
+              <label>Color</label>
+              <label><input type="color" value="#333333"></label>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="settings-panel" id="panel-normals">
+          <div class="panel-inner">
+            <div class="panel-title">Normal settings</div>
+            <div class="row">
+              <label>Length</label>
+              <label><input type="range" min="5" max="50" value="20" oninput="this.nextElementSibling.textContent=this.value"></label>
+              <span class="val">20</span>
+            </div>
+            <div class="row">
+              <label>Color</label>
+              <label><input type="color" value="#e24b4a"></label>
+            </div>
+            <div class="row">
+              <label>Arrow</label>
+              <label><select><option>Arrow</option><option>Line</option><option>Dot</option></select></label>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <div id="settings_container" class = "hidden">
 
@@ -172,10 +234,11 @@
           <div>Has Normals: <span id="has_normals">true</span></div>
         </div>
 
-      </div>
     </div>
 
+
     <script type="module" src="src/main.ts"></script>
+
 
   </body>
 </html>

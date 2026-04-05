@@ -49,7 +49,7 @@ function getLoader(ext: string) {
 }
 
 
-export function loadMesh(filePath: string, file_name:string): Promise<Mesh | Group> {
+export function loadMeshFromFile(filePath: string, file_name:string): Promise<Mesh | Group> {
 
     const ext = getExtension(file_name);
 
@@ -112,18 +112,69 @@ export function loadMesh(filePath: string, file_name:string): Promise<Mesh | Gro
 
 }
 
+type SupportedFormat = 'obj' | 'stl' | 'ply' | 'dae';
+
 // @ts-ignore
-export async function loadOBJ(input: File | Blob | ArrayBuffer | string): Promise<THREE.Group> {
-    let text: string;
-
-    if (typeof input === "string") {
-        text = input;
+async function resolveInput(input: File | Blob | ArrayBuffer | string): Promise<{ text: string; buffer: ArrayBuffer; hint?: string }> {
+    if (typeof input === 'string') {
+        const encoder = new TextEncoder();
+        const buffer = encoder.encode(input).buffer;
+        return { text: input, buffer };
     } else if (input instanceof ArrayBuffer) {
-        text = new TextDecoder().decode(input);
+        const text = new TextDecoder().decode(input);
+        return { text, buffer: input };
     } else {
-        text = await input.text();
+        const hint = input instanceof File ? input.name.split('.').pop()?.toLowerCase() : undefined;
+        const buffer = await input.arrayBuffer();
+        const text = new TextDecoder().decode(buffer);
+        return { text, buffer, hint };
     }
+}
 
-    const loader = new OBJLoader();
-    return loader.parse(text);
+function detectFormat(text: string, hint?: string): SupportedFormat {
+    // @ts-ignore
+
+    if (hint && ['obj', 'stl', 'ply', 'dae'].includes(hint)) {
+        return hint as SupportedFormat;
+    }
+    // @ts-ignore
+    if (text.trimStart().startsWith('<?xml') || text.includes('<COLLADA')) return 'dae';
+    // @ts-ignore
+    if (text.startsWith('ply')) return 'ply';
+    // @ts-ignore
+    if (text.startsWith('solid')) return 'stl';
+    return 'obj'; // fallback
+}
+// @ts-ignore
+export async function LoadMeshFromIndexDB(input: File | Blob | ArrayBuffer | string): Promise<Scene> {
+    const { text, buffer, hint } = await resolveInput(input);
+    const format = detectFormat(text, hint);
+
+    switch (format) {
+        case 'obj': {
+            const loader = new OBJLoader();
+            return loader.parse(text);
+        }
+        case 'stl': {
+            const loader = new STLLoader();
+            const geometry = loader.parse(buffer);
+            const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
+            const group = new THREE.Group();
+            group.add(mesh);
+            return group;
+        }
+        case 'ply': {
+            const loader = new PLYLoader();
+            const geometry = loader.parse(buffer);
+            const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
+            const group = new THREE.Group();
+            group.add(mesh);
+            return group;
+        }
+        case 'dae': {
+            const loader = new ColladaLoader();
+            const result = loader.parse(text, '');
+            return result.scene;
+        }
+    }
 }

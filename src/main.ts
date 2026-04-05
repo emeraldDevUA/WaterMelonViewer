@@ -3,9 +3,9 @@ import * as THREE from 'three'
 // import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
 import {Viewer} from "./Viewer";
 import {sceneOptions} from "./SceneOptions";
-import {loadMesh, loadOBJ} from "./ModelAdapter";
+import {loadMeshFromFile, LoadMeshFromIndexDB} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
-import {getFile} from "./db-calls/index-db"
+import {getFile, removeFile} from "./db-calls/index-db"
 
 
 function recenterMesh(mesh: THREE.Object3D): void {
@@ -91,11 +91,9 @@ const MIME: Record<string, string> = {
     try {
         console.log("STEP 4: loading OBJ");
 
-        const model = await loadOBJ(file);
+        const model = await LoadMeshFromIndexDB(file);
 
         console.log("STEP 5: model loaded", model);
-
-        model.scale.set(1, 1, 1);
 
         viewer.addMesh(model);
 
@@ -112,8 +110,9 @@ canvas.addEventListener('drop', async (e) => {
     if (!file) return;
     modelUrl = URL.createObjectURL(file);
     console.log(modelUrl)
+
     //@ts-ignore
-    model = await loadMesh(modelUrl, file.name, import.meta.url);
+    model = await loadMeshFromFile(modelUrl, file.name, import.meta.url);
     viewer.addMesh(model);
 
     model.position.set(0, 0, 0);
@@ -196,8 +195,29 @@ const showAxesCheckbox = document.getElementById("showAxes")! as HTMLInputElemen
 const axesSizeInput = document.getElementById("axes_size")!  as HTMLInputElement;
 
 const enableSkyBoxCheckbox = document.getElementById("enableSkyBox")! as HTMLInputElement;
-
 const scene_div = document.getElementById("scene_elements")!;
+
+
+const buttons = [
+    { btn: document.getElementById('vertices'), panel: document.getElementById('panel-vertices') },
+    { btn: document.getElementById('edges'), panel: document.getElementById('panel-edges') },
+    { btn: document.getElementById('normals'), panel: document.getElementById('panel-normals') },
+];
+
+buttons.forEach(({ btn, panel }) => {
+    btn.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const isActive = btn.classList.contains('active');
+        buttons.forEach(({ btn: b, panel: p }) => {
+            b.classList.remove('active');
+            p.classList.remove('open');
+        });
+        if (!isActive) {
+            btn.classList.add('active');
+            panel.classList.add('open');
+        }
+    });
+});
 
 background_color.addEventListener("input", (event) => {
     const hex = (event.target as HTMLInputElement).value;
@@ -233,7 +253,7 @@ clear_btn.addEventListener("click", () => {
 
     scene_div.innerHTML = "";
     viewer.clearScene();
-
+    removeFile();
 })
 
 recenter_btn.addEventListener("click", () => {
@@ -282,7 +302,7 @@ light_config1.addEventListener("click", () => {
         { color: 0xe8f0ff, intensity: 1.0, position: { x: 0,   y: 80, z: 20 }, castShadow: false },
         { color: 0xfff4e0, intensity: 0.4, position: { x: 0,   y: -20, z: 0 }, castShadow: false },
     ]
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 light_config2.addEventListener("click", () => {
@@ -295,7 +315,7 @@ light_config2.addEventListener("click", () => {
         { color: 0xff8c30, intensity: 1.2, position: { x: 60,  y: 10, z: -20 }, castShadow: true },
         { color: 0x3a3a7a, intensity: 0.35, position: { x: -60, y: 15, z:  20 }, castShadow: false },
     ]
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 light_config3.addEventListener("click", () => {
@@ -308,7 +328,7 @@ light_config3.addEventListener("click", () => {
         { color: 0xc8d8f8, intensity: 0.3, position: { x: -20, y: 60, z: 30 }, castShadow: true },
         { color: 0x101030, intensity: 0.1, position: { x:  20, y: -10, z: -10 }, castShadow: false },
     ]
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 light_config4.addEventListener("click", () => {
@@ -322,7 +342,7 @@ light_config4.addEventListener("click", () => {
         { color: 0xd0e8ff, intensity: 0.4, position: { x:  40, y: 30, z:  30 }, castShadow: false },
         { color: 0xffe8d0, intensity: 0.6, position: { x:   0, y: 20, z: -60 }, castShadow: false },
     ]
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 light_config5.addEventListener("click", () => {
@@ -334,7 +354,7 @@ light_config5.addEventListener("click", () => {
         { color: 0xff0000, intensity: 0.5, position: {x:30,  y:20, z:0}, castShadow: true },
     ]
 
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 light_menu.addEventListener("click", () => {
@@ -345,30 +365,30 @@ light_menu.addEventListener("click", () => {
 // Listen for changes
 showGridCheckbox.addEventListener("change", () => {
     sceneOptions.debug.grid.showGrid = showGridCheckbox.checked;
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 gridSizeInput.addEventListener("change", () => {
     sceneOptions.debug.grid.gridSize = +gridSizeInput.value
     viewer.updateGrid();
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 showAxesCheckbox.addEventListener("change", () => {
     sceneOptions.debug.axes.showAxes = showAxesCheckbox.checked;
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 axesSizeInput.addEventListener("change", () => {
     sceneOptions.debug.axes.axisSize = +axesSizeInput.value
     viewer.updateAxes();
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 
 light_gizmo_checkbox.addEventListener("change", () => {
     sceneOptions.lighting.showHelpers = light_gizmo_checkbox.checked;
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 shadow_checkbox.addEventListener("change", () => {
@@ -376,7 +396,7 @@ shadow_checkbox.addEventListener("change", () => {
 
 enableSkyBoxCheckbox.addEventListener("change", () => {
     sceneOptions.renderer.skybox.enabled = enableSkyBoxCheckbox.checked;
-    viewer.setSettings(); // update your scene helpers
+    viewer.setSettings();
 });
 
 
