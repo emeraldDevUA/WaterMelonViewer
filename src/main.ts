@@ -1,11 +1,25 @@
 import * as THREE from 'three'
-// import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
-// import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
+
+
 import {Viewer} from "./Viewer";
-import {sceneOptions} from "./SceneOptions";
-import {loadMeshFromFile, LoadMeshFromIndexDB} from "./ModelAdapter";
 import {getGeometryInfo} from "./MeshData";
+import {sceneOptions} from "./SceneOptions";
 import {getFile, removeFile} from "./db-calls/index-db"
+import {loadMeshFromFile, LoadMeshFromIndexDB} from "./ModelAdapter";
+
+
+// Used to upload the model as a blob
+let modelUrl: string;
+let model: THREE.Object3D;
+
+// @ts-ignore
+let info: MeshInfo | GroupInfo;
+
+// is used to control file input overlay
+let overlay: HTMLElement;
+
+// the viewer itself
+const viewer = new Viewer(sceneOptions);
 
 
 function recenterMesh(mesh: THREE.Object3D): void {
@@ -15,66 +29,93 @@ function recenterMesh(mesh: THREE.Object3D): void {
     mesh.position.set(-center.x, -center.y, -center.z)
 }
 
-///////////////// dr-light helper /////////////////
-//scene.add(dLightHelper)
+function showError(message: string) {
+    overlay.style.display = 'grid';
+    overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.color = 'rgba(224, 92, 92, 0.6)'; // red tint on error
+    overlay.textContent = `⚠ ${message}`;
 
-///////////////// dr-light shadow helper /////////////////
-// const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
-// scene.add(dLightShadowHelper)
+    // reset back to idle after 3 seconds
+    setTimeout(() => {
+        overlay.textContent = 'Drop a file to get started';
+        overlay.style.background = '';
+        overlay.style.color = 'rgba(255, 255, 255, 0.3)';
+    }, 2000);
+}
+
+function addOverflow() {
+    const canvas =  viewer.getRender().domElement;
+    const wrapper = document.createElement('div');
+
+    wrapper.style.cssText = 'position: relative; width: 100%; height: 100%; z-index: 0';
+    canvas.parentNode.insertBefore(wrapper, canvas);
+    wrapper.appendChild(canvas);
+    overlay = document.createElement('div');
+
+    overlay.style.cssText = `
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 2rem;
+    pointer-events: none;
+    border: 3px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    transition: background 0.2s, border-color 0.2s;`;
+
+    overlay.textContent = 'Drop a file to get started';
+
+    wrapper.appendChild(overlay);
+    let leaveTimeout = 0;
+    canvas.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        clearTimeout(leaveTimeout);
+        overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+        overlay.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+    });
+
+    canvas.addEventListener('dragleave', () => {
+        leaveTimeout = setTimeout(() => {
+            overlay.style.background = '';
+            overlay.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        }, 50);
+    });
 
 
-///////////////// spotlight /////////////////
-// const spotLight = new THREE.SpotLight('#ffffff')
-// scene.add(spotLight)
-// spotLight.position.set(-100, 100, 0)
-// spotLight.castShadow = true
-// spotLight.angle = 0.2
-
-///////////////// sLight helper /////////////////
-// const sLightHelper = new THREE.SpotLightHelper(spotLight)
-// scene.add(sLightHelper)
+    // @ts-ignore
+    canvas.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer!.files[0];
+        if (!file) return;
+        modelUrl = URL.createObjectURL(file);
+        console.log(modelUrl)
 
 
-///////////////// fog /////////////////
-// scene.fog = new THREE.Fog('#ffffff', 0, 200)
-// scene.fog = new THREE.FogExp2('#ffffff', 0.01)
+        try {
+            //@ts-ignore
+            model = await loadMeshFromFile(modelUrl, file.name, import.meta.url);
 
+            viewer.addMesh(model);
+            model.position.set(0, 0, 0);
+            model.scale.set(1, 1, 1);
+            viewer.setSettings();
 
-///////////////// texture loaders /////////////////
-// const textureLoader = new THREE.TextureLoader()
-// scene.background = textureLoader.load(img03)
+            overlay.style.display = 'none';
+        } catch (err) {
+            URL.revokeObjectURL(modelUrl); // clean up the blob URL on failure
+            showError(err instanceof Error ? err.message : 'Failed to load model');
+        }
 
-// const cubeTextureLoader = new THREE.CubeTextureLoader()
-// scene.background = cubeTextureLoader.load([img, img, img, img, img, img])
+        viewer.addMesh(model);
 
-///////////////// renderer color settings /////////////////
-// renderer.outputEncoding = THREE.sRGBEncoding
-// renderer.toneMapping = THREE.ACESFilmicToneMapping
-// renderer.toneMappingExposure = 1.5
+        model.position.set(0, 0, 0);
+        model.scale.set(1, 1, 1);
 
-///////////////// import 3d models /////////////////
-let modelUrl: string;
-let model: THREE.Object3D;
-const viewer = new Viewer(sceneOptions);
-
-const renderer = viewer.getRender();
-const canvas = renderer.domElement; // ← this is the canvas
-
-// viewer.setFog(new THREE.FogExp2('#ffffff', 0.01));
-viewer.setSettings();
-
-canvas.addEventListener('dragover', (e) => {
-    e.preventDefault();
-});
-
-const MIME: Record<string, string> = {
-    obj:  'text/plain',
-    glb:  'model/gltf-binary',
-    gltf: 'model/gltf+json',
-    fbx:  'application/octet-stream',
-    stl:  'application/octet-stream',
-};
-
+        viewer.setSettings();
+        overlay.style.display = 'none';
+    });
+}
 
 // @ts-ignore
 (async () => {
@@ -83,7 +124,10 @@ const MIME: Record<string, string> = {
     const data = await getFile();
     console.log("STEP 2: got data", data);
 
-    if (!data) return;
+    if (!data) {
+        addOverflow();
+        return;
+    }
 
     const file = data.file;
     console.log("STEP 3: file ready", file);
@@ -97,70 +141,17 @@ const MIME: Record<string, string> = {
 
         viewer.addMesh(model);
 
+
+        model.position.set(0, 0, 0);
+        model.scale.set(1, 1, 1);
         console.log("STEP 6: added to viewer");
+        viewer.setSettings();
+
     } catch (err) {
         console.error("OBJ LOAD FAILED:", err);
     }
 })();
 
-// @ts-ignore
-canvas.addEventListener('drop', async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer!.files[0];
-    if (!file) return;
-    modelUrl = URL.createObjectURL(file);
-    console.log(modelUrl)
-
-    //@ts-ignore
-    model = await loadMeshFromFile(modelUrl, file.name, import.meta.url);
-    viewer.addMesh(model);
-
-    model.position.set(0, 0, 0);
-    model.scale.set(1, 1, 1);
-});
-
-
-
-///////////////// gui /////////////////
-// const gui = new dat.GUI();
-// const options = {
-//     color : 0x00ff00,
-// }
-// gui.addColor(options, 'color').onChange((e) => {
-//     options.color = e.target.value;
-// })
-//
-// gui.add(options, 'color').onChange((e) => {
-//     options.color = e.target.value;
-// })
-
-
-///////////////// get mouse pos /////////////////
-// const mousePosition = new THREE.Vector2()
-// window.addEventListener('mousemove', (e) => {
-//     mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1
-//     mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1
-// })
-
-
-
-// const clock = new THREE.Clock()
-
-// const animate = (time) => {
-//     renderer.render(scene, camera)
-// }
-//
-// renderer.setAnimationLoop(animate)
-//
-// window.addEventListener('resize', () => {
-//     camera.aspect = window.innerWidth / window.innerHeight
-//     camera.updateProjectionMatrix()
-//     renderer.setSize(window.innerWidth, window.innerHeight)
-// })
-
-
-// @ts-ignore
-let info: MeshInfo | GroupInfo;
 
 const menu_button: HTMLElement = document.getElementById("main_menu")!;
 const light_menu: HTMLElement = document.getElementById("light_menu")!;
@@ -182,6 +173,7 @@ const light_config2: HTMLElement = document.getElementById("lighting_config2")!;
 const light_config3: HTMLElement = document.getElementById("lighting_config3")!;
 const light_config4: HTMLElement = document.getElementById("lighting_config4")!;
 const light_config5: HTMLElement = document.getElementById("lighting_config5")!;
+
 const lighting_config_buttons: HTMLElement[] = [light_config1, light_config2, light_config3, light_config4, light_config5];
 
 const shadow_checkbox = document.getElementById("shadowsEnabled")! as HTMLInputElement;
@@ -197,6 +189,8 @@ const axesSizeInput = document.getElementById("axes_size")!  as HTMLInputElement
 const enableSkyBoxCheckbox = document.getElementById("enableSkyBox")! as HTMLInputElement;
 const scene_div = document.getElementById("scene_elements")!;
 
+const enableRotation = document.getElementById("autoRotate")! as HTMLInputElement;
+const autoRotateSpeed = document.getElementById("autoRotateSpeed")! as HTMLInputElement;
 
 const buttons = [
     { btn: document.getElementById('vertices'), panel: document.getElementById('panel-vertices') },
@@ -207,13 +201,13 @@ const buttons = [
 buttons.forEach(({ btn, panel }) => {
     btn.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        const isActive = btn.classList.contains('active');
+        const isActive = btn.classList.contains('selected');
         buttons.forEach(({ btn: b, panel: p }) => {
-            b.classList.remove('active');
+            b.classList.remove('selected');
             p.classList.remove('open');
         });
         if (!isActive) {
-            btn.classList.add('active');
+            btn.classList.add('selected');
             panel.classList.add('open');
         }
     });
@@ -247,22 +241,17 @@ menu_button.addEventListener("click", () => {
         div.textContent = lightName;
         scene_div.append(div)
     }
-
 });
-clear_btn.addEventListener("click", () => {
 
+clear_btn.addEventListener("click", () => {
     scene_div.innerHTML = "";
     viewer.clearScene();
     removeFile();
+    overlay.style.display = 'grid'
 })
 
 recenter_btn.addEventListener("click", () => {
-
     recenterMesh(model)
-
-    // viewer.removeMesh(model);
-    // viewer.addMesh(model);
-
 })
 
 const ui = {
@@ -273,6 +262,7 @@ const ui = {
 
 model_properties.addEventListener("click", () => {
     model_properties_container.classList.toggle("hidden");
+
     function setProperties(vertexCount: number, faceCount: number, hasNormals: boolean) {
         ui.vertices.textContent = String(vertexCount);
         ui.faces.textContent = String(faceCount);
@@ -283,12 +273,12 @@ model_properties.addEventListener("click", () => {
         info = getGeometryInfo(model as THREE.Mesh);
         const { vertexCount, faceCount, hasNormals, boundingBox } = info;
         setProperties(vertexCount, faceCount, hasNormals);
-
     } else {
         info = getGeometryInfo(model as THREE.Group);
         const { totalVertices, totalFaces, meshCount } = info;
         setProperties(totalVertices, totalFaces, false);
     }
+
 });
 
 
@@ -417,3 +407,12 @@ normals_button.addEventListener("click", () => {
     sceneOptions.debug.normals.showVertexNormals = !sceneOptions.debug.normals.showVertexNormals;
     viewer.setSettings();
 });
+
+enableRotation.addEventListener("change", () => {
+    sceneOptions.camera.autoRotate = enableRotation.checked;
+    viewer.setSettings();
+})
+
+autoRotateSpeed.addEventListener("change", () => {
+    sceneOptions.camera.autoRotateSpeed = +autoRotateSpeed.value
+})

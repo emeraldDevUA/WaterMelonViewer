@@ -46,6 +46,8 @@ export class Viewer {
 
         this.init()
         window.addEventListener("resize", this.onWindowResize.bind(this));
+
+        this.setSettings();
     }
 
     public addMesh(mesh: THREE.Object3D) {
@@ -168,6 +170,10 @@ export class Viewer {
             this.scene.add(configuration);
         })
 
+
+         this.renderer.setAnimationLoop(this.animate)
+
+
     }
 
     private init() {
@@ -179,14 +185,19 @@ export class Viewer {
 
         this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
         document.getElementById('app')?.appendChild(this.renderer.domElement)
-        this.renderer.setAnimationLoop(this.animate)
 
     }
 
     private animate = (time: number) => {
         this.renderer.render(this.scene, this.camera)
-        //this.controls.rotateLeft( 1E-7*time)
+        // inefficient af, but whatever
+        const isOn = + (this.options.camera.autoRotate);
+        const speed = + (this.options.camera.autoRotateSpeed);
+
+
+        this.controls.rotateLeft( speed * isOn * 1E-7 * time)
     }
+
 
     public setFog(fog: THREE.Fog | THREE.FogExp2 | null) {
         this.scene.fog = fog

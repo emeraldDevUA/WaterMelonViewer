@@ -9,7 +9,8 @@
   --text-hint: #444441;
   --accent: #1d9e75;
   --accent-subtle: #0f3d2e;
-
+  --selected: #e8a030;
+  --selected-subtle: #3d2a0a;
   font-family: 'DM Mono', monospace, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -121,6 +122,11 @@ button.active {
   display: none !important;
 }
 
+button.selected {
+  background-color: var(--selected-subtle);
+  border-color: var(--selected);
+  color: var(--selected);
+}
 #app {
   position: relative;
   width: 100%;
@@ -155,6 +161,7 @@ button.active {
   font-family: inherit;
   max-height: 50%;
   overflow: auto;
+  z-index: 999;
 }
 
 #lighting_container {
@@ -171,6 +178,7 @@ button.active {
   position: absolute;
   right: 1%;
   bottom: 2%;
+  z-index: 999;
 }
 
 #model_properties_container {
@@ -182,6 +190,7 @@ button.active {
   flex-direction: column;
   font-size: 10pt;
   color: var(--text-muted);
+  z-index: 999;
 }
 
 .setting {
