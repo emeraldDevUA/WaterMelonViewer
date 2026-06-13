@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import {Viewer} from "./Viewer";
 import {getGeometryInfo} from "./MeshData";
 import {sceneOptions} from "./SceneOptions";
+// @ts-ignore
 import {getFile, removeFile} from "./db-calls/index-db"
 import {loadMeshFromFile, LoadMeshFromIndexDB} from "./ModelAdapter";
 
@@ -48,6 +49,7 @@ function addOverflow() {
     const wrapper = document.createElement('div');
 
     wrapper.style.cssText = 'position: relative; width: 100%; height: 100%; z-index: 0';
+    // @ts-ignore
     canvas.parentNode.insertBefore(wrapper, canvas);
     wrapper.appendChild(canvas);
     overlay = document.createElement('div');
@@ -199,15 +201,21 @@ const buttons = [
 ];
 
 buttons.forEach(({ btn, panel }) => {
+    // @ts-ignore
     btn.addEventListener('contextmenu', (e) => {
         e.preventDefault();
+        // @ts-ignore
         const isActive = btn.classList.contains('selected');
         buttons.forEach(({ btn: b, panel: p }) => {
+            // @ts-ignore
             b.classList.remove('selected');
+            // @ts-ignore
             p.classList.remove('open');
         });
         if (!isActive) {
+            // @ts-ignore
             btn.classList.add('selected');
+            // @ts-ignore
             panel.classList.add('open');
         }
     });
@@ -271,11 +279,11 @@ model_properties.addEventListener("click", () => {
 
     if ((model as THREE.Mesh).isMesh) {
         info = getGeometryInfo(model as THREE.Mesh);
-        const { vertexCount, faceCount, hasNormals, boundingBox } = info;
+        const { vertexCount, faceCount, hasNormals} = info;
         setProperties(vertexCount, faceCount, hasNormals);
     } else {
         info = getGeometryInfo(model as THREE.Group);
-        const { totalVertices, totalFaces, meshCount } = info;
+        const { totalVertices, totalFaces} = info;
         setProperties(totalVertices, totalFaces, false);
     }
 

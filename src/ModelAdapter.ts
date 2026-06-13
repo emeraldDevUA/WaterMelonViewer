@@ -1,21 +1,31 @@
+// @ts-ignore
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+// @ts-ignore
 import {FBXLoader} from "three/examples/jsm/loaders/FBXLoader";
+// @ts-ignore
 import {STLLoader} from "three/examples/jsm/loaders/STLLoader";
+// @ts-ignore
 import {PLYLoader} from "three/examples/jsm/loaders/PLYLoader";
+// @ts-ignore
 import {ColladaLoader} from "three/examples/jsm/loaders/ColladaLoader";
+// @ts-ignore
 import {TDSLoader} from "three/examples/jsm/loaders/TDSLoader";
+// @ts-ignore
 import {AMFLoader} from "three/examples/jsm/loaders/AMFLoader";
+// @ts-ignore
 import {VRMLLoader} from "three/examples/jsm/loaders/VRMLLoader";
+// @ts-ignore
 import {VTKLoader} from "three/examples/jsm/loaders/VTKLoader";
+// @ts-ignore
 import {USDLoader} from "three/examples/jsm/loaders/USDLoader";
+// @ts-ignore
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 import {
     Mesh,
     MeshStandardMaterial,
     Group,
-    BufferGeometry,
-    Object3DEventMap
+    BufferGeometry, type Object3DEventMap,
 } from "three";
 import * as THREE from "three";
 

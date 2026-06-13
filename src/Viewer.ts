@@ -28,14 +28,15 @@ export class Viewer {
     private readonly scene: THREE.Scene
     private readonly camera: THREE.PerspectiveCamera
     private readonly renderer: THREE.WebGLRenderer
-    private controls: OrbitControls
+    private readonly controls: OrbitControls
 
-    private gridHelper: THREE.GridHelper;
-    private axesHelper: THREE.AxesHelper;
+    private gridHelper: THREE.GridHelper | undefined;
+    private axesHelper: THREE.AxesHelper | undefined;
     private lighting_configurations: Array<THREE.Object3D> = [];
 
-    private skyBox: THREE.CubeTexture;
+    private skyBox: THREE.CubeTexture | undefined;
 
+    // @ts-ignore
     constructor(private options: typeof sceneOptions) {
         this.scene = new THREE.Scene()
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -129,6 +130,7 @@ export class Viewer {
             }
             this.scene.add(this.gridHelper)
         } else {
+            // @ts-ignore
             this.scene.remove(this.gridHelper)
         }
 
@@ -138,6 +140,7 @@ export class Viewer {
             }
             this.scene.add(this.axesHelper)
         } else {
+            // @ts-ignore
             this.scene.remove(this.axesHelper)
         }
 
@@ -239,11 +242,13 @@ export class Viewer {
     }
 
     public updateGrid(){
+        // @ts-ignore
         this.scene.remove(this.gridHelper)
         this.gridHelper = new GridHelper(this.options.debug.grid.gridSize);
     }
 
     public updateAxes() {
+        // @ts-ignore
         this.scene.remove(this.axesHelper)
         this.axesHelper = new AxesHelper(this.options.debug.axes.axisSize);
     }
