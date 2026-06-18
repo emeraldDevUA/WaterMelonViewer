@@ -20,171 +20,160 @@ import {VTKLoader} from "three/examples/jsm/loaders/VTKLoader";
 import {USDLoader} from "three/examples/jsm/loaders/USDLoader";
 // @ts-ignore
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+// @ts-ignore
+import {ThreeMFLoader} from "three/examples/jsm/loaders/3MFLoader";
 
-import {
-    Mesh,
-    MeshStandardMaterial,
-    Group,
-    BufferGeometry, type Object3DEventMap,
-} from "three";
 import * as THREE from "three";
+import {BufferGeometry, Group, Mesh, MeshStandardMaterial, Scene} from "three";
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-const loaderMap = {
-    gltf: GLTFLoader,
-    glb: GLTFLoader,
-    obj: OBJLoader,
-    fbx: FBXLoader,
-    stl: STLLoader,
-    ply: PLYLoader,
-    dae: ColladaLoader,
-    "3ds": TDSLoader,
-    amf: AMFLoader,
-    wrl: VRMLLoader,
-    vtk: VTKLoader,
-    usd: USDLoader
+type FileExtension = keyof typeof LOADER_MAP;
+
+type SupportedInlineFormat = "obj" | "stl" | "ply" | "dae" | "glb" | "3mf";
+
+type ResolvedInput = {
+    text: string;
+    buffer: ArrayBuffer;
+    hint?: string;
 };
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const LOADER_MAP = {
+    gltf: GLTFLoader,
+    glb:  GLTFLoader,
+    obj:  OBJLoader,
+    fbx:  FBXLoader,
+    stl:  STLLoader,
+    ply:  PLYLoader,
+    dae:  ColladaLoader,
+    amf:  AMFLoader,
+    wrl:  VRMLLoader,
+    vtk:  VTKLoader,
+    usd:  USDLoader,
+
+    "3ds": TDSLoader,
+    "3mf": ThreeMFLoader,
+} as const;
+
+const DEFAULT_MATERIAL = new MeshStandardMaterial({
+    color: 0xaaaaaa,
+    side: THREE.FrontSide,
+});
+
+const INLINE_FORMATS = new Set<string>(["obj", "stl", "ply", "dae", "glb", "3mf"]);
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function getExtension(filePath: string): string | undefined {
     const cleanPath = filePath.split(/[?#]/)[0];
-    const parts = cleanPath.split('.');
-    if (parts.length === 1) return undefined;
-    return parts.pop()?.toLowerCase();
+    const parts = cleanPath.split(".");
+    return parts.length > 1 ? parts.pop()?.toLowerCase() : undefined;
 }
 
-function getLoader(ext: string) {
-    const Loader = loaderMap[ext as keyof typeof loaderMap];
-    if (!Loader) throw new Error(`Unsupported format: ${ext}`);
-    return new Loader();
+function geometryToGroup(geometry: BufferGeometry): Group {
+    const mesh = new Mesh(geometry, DEFAULT_MATERIAL.clone());
+    const group = new Group();
+    group.add(mesh);
+    return group;
 }
 
+// ---------------------------------------------------------------------------
+// loadMeshFromFile — loads a remote/local URL via the appropriate Three.js loader
+// ---------------------------------------------------------------------------
 
-export function loadMeshFromFile(filePath: string, file_name:string): Promise<Mesh | Group> {
+export function loadMeshFromFile(filePath: string, fileName: string): Promise<Mesh | Group> {
+    const ext = getExtension(fileName);
+    if (!ext) throw new Error(`Cannot determine file extension for: "${fileName}"`);
 
-    const ext = getExtension(file_name);
+    const LoaderClass = LOADER_MAP[ext as FileExtension];
+    if (!LoaderClass) throw new Error(`Unsupported format: ".${ext}"`);
 
-    if (!ext) {
-        throw new Error("Cannot determine file extension");
-    }
+    const loader = new LoaderClass();
 
-    const loader = getLoader(ext);
-
-    // @ts-ignore
-    return new Promise((resolve: (arg0: Mesh<BufferGeometry<any, any>,
-                        MeshStandardMaterial, Object3DEventMap> | Group<any>) => void,
-                        reject: (arg0: any) => void) => {
-
-        loader.load(
-            filePath, (result: any) => {
-
-                // GLTF
-                if (result.scene) {
-                    resolve(result.scene);
-                    return;
-                }
-
-                // Collada
-                if (result.scene) {
-                    resolve(result.scene);
-                    return;
-                }
-
-                // Geometry loaders (STL, PLY, VTK)
-                if (result instanceof BufferGeometry) {
-                    const mesh = new Mesh(
-                        result,
-                        new MeshStandardMaterial({
-                            color: 0xaaaaaa,
-                            side: THREE.FrontSide,
-
-                        })
-                    );
-                    resolve(mesh);
-                    return;
-                }
-
-                // OBJ / FBX / 3DS / VRML
-                if (result instanceof Group) {
-                    resolve(result);
-                    return;
-                }
-
-                if (result) {
-                    resolve(result);
-                } else {
-                    reject(new Error(`Loader returned empty result for ${file_name}`));
-                }
-            },
-
-            undefined, (error: any) => reject(error)
+    return new Promise<Mesh | Group>((resolve, reject) => {
+        (loader as any).load(
+            filePath,
+            (result: any) => resolve(normalizeLoaderResult(result, fileName)),
+            undefined,
+            reject,
         );
     });
-
 }
 
-type SupportedFormat = 'obj' | 'stl' | 'ply' | 'dae';
+function normalizeLoaderResult(result: any, fileName: string): Mesh | Group {
+    if (result?.scene instanceof Object) return result.scene;   // GLTF / Collada
+    if (result instanceof BufferGeometry) return geometryToGroup(result);  // STL, PLY, VTK
+    if (result instanceof Group || result instanceof Mesh) return result;  // OBJ, FBX, 3DS, VRML
+    if (result) return result;
+    throw new Error(`Loader returned empty result for "${fileName}"`);
+}
 
-// @ts-ignore
-async function resolveInput(input: File | Blob | ArrayBuffer | string): Promise<{ text: string; buffer: ArrayBuffer; hint?: string }> {
-    if (typeof input === 'string') {
-        const encoder = new TextEncoder();
-        const buffer = encoder.encode(input).buffer;
+// ---------------------------------------------------------------------------
+// loadMeshFromIndexDB — parses in-memory data (File, Blob, ArrayBuffer, string)
+// ---------------------------------------------------------------------------
+
+async function resolveInput(input: File | Blob | ArrayBuffer | string): Promise<ResolvedInput> {
+    if (typeof input === "string") {
+        const buffer = new TextEncoder().encode(input).buffer;
         return { text: input, buffer };
-    } else if (input instanceof ArrayBuffer) {
-        const text = new TextDecoder().decode(input);
-        return { text, buffer: input };
-    } else {
-        const hint = input instanceof File ? input.name.split('.').pop()?.toLowerCase() : undefined;
-        const buffer = await input.arrayBuffer();
-        const text = new TextDecoder().decode(buffer);
-        return { text, buffer, hint };
     }
+
+    if (input instanceof ArrayBuffer) {
+        return { text: new TextDecoder().decode(input), buffer: input };
+    }
+
+    const hint = input instanceof File ? getExtension(input.name) : undefined;
+    const buffer = await input.arrayBuffer();
+    return { text: new TextDecoder().decode(buffer), buffer, hint };
 }
 
-function detectFormat(text: string, hint?: string): SupportedFormat {
-    // @ts-ignore
-
-    if (hint && ['obj', 'stl', 'ply', 'dae'].includes(hint)) {
-        return hint as SupportedFormat;
-    }
-    // @ts-ignore
-    if (text.trimStart().startsWith('<?xml') || text.includes('<COLLADA')) return 'dae';
-    // @ts-ignore
-    if (text.startsWith('ply')) return 'ply';
-    // @ts-ignore
-    if (text.startsWith('solid')) return 'stl';
-    return 'obj'; // fallback
+function detectInlineFormat(text: string, hint?: string): SupportedInlineFormat {
+    if (hint && INLINE_FORMATS.has(hint)) return hint as SupportedInlineFormat;
+    if (text.trimStart().startsWith("<?xml") || text.includes("<COLLADA")) return "dae";
+    if (text.startsWith("ply"))   return "ply";
+    if (text.startsWith("solid")) return "stl";
+    if (text.startsWith("glb"))   return "glb";
+    return "obj";
 }
-// @ts-ignore
-export async function LoadMeshFromIndexDB(input: File | Blob | ArrayBuffer | string): Promise<Scene> {
+
+export async function loadMeshFromIndexDB(
+    input: File | Blob | ArrayBuffer | string,
+): Promise<Scene | Group> {
     const { text, buffer, hint } = await resolveInput(input);
-    const format = detectFormat(text, hint);
+    const format = detectInlineFormat(text, hint);
 
     switch (format) {
-        case 'obj': {
-            const loader = new OBJLoader();
-            return loader.parse(text);
+        case "obj": {
+            return new OBJLoader().parse(text);
         }
-        case 'stl': {
-            const loader = new STLLoader();
-            const geometry = loader.parse(buffer);
-            const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
-            const group = new THREE.Group();
-            group.add(mesh);
-            return group;
+        case "stl": {
+            return geometryToGroup(new STLLoader().parse(buffer));
         }
-        case 'ply': {
-            const loader = new PLYLoader();
-            const geometry = loader.parse(buffer);
-            const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
-            const group = new THREE.Group();
-            group.add(mesh);
-            return group;
+        case "ply": {
+            return geometryToGroup(new PLYLoader().parse(buffer));
         }
-        case 'dae': {
-            const loader = new ColladaLoader();
-            const result = loader.parse(text, '');
+        case "dae": {
+            return new ColladaLoader().parse(text, "").scene;
+        }
+        case "glb": {
+            const result = await new Promise<any>((resolve, reject) =>
+                new GLTFLoader().parse(buffer, "", resolve, reject),
+            );
             return result.scene;
+        }
+        case "3mf": {
+            return new ThreeMFLoader().parse(buffer);
+        }
+        default: {
+            throw new Error(`Unhandled format: "${format}"`);
         }
     }
 }

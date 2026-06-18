@@ -6,7 +6,7 @@ import {getGeometryInfo} from "./MeshData";
 import {sceneOptions} from "./SceneOptions";
 // @ts-ignore
 import {getFile, removeFile} from "./db-calls/index-db"
-import {loadMeshFromFile, LoadMeshFromIndexDB} from "./ModelAdapter";
+import {loadMeshFromFile, loadMeshFromIndexDB} from "./ModelAdapter";
 
 
 // Used to upload the model as a blob
@@ -137,7 +137,7 @@ function addOverflow() {
     try {
         console.log("STEP 4: loading OBJ");
 
-        const model = await LoadMeshFromIndexDB(file);
+        const model = await loadMeshFromIndexDB(file);
 
         console.log("STEP 5: model loaded", model);
 
@@ -194,11 +194,28 @@ const scene_div = document.getElementById("scene_elements")!;
 const enableRotation = document.getElementById("autoRotate")! as HTMLInputElement;
 const autoRotateSpeed = document.getElementById("autoRotateSpeed")! as HTMLInputElement;
 
+const vertex_size_element = document.getElementById("vertex_size_config")! as HTMLInputElement;
+const vertex_color_element = document.getElementById("vertex_color_config")! as HTMLInputElement;
+
+
 const buttons = [
     { btn: document.getElementById('vertices'), panel: document.getElementById('panel-vertices') },
     { btn: document.getElementById('edges'), panel: document.getElementById('panel-edges') },
     { btn: document.getElementById('normals'), panel: document.getElementById('panel-normals') },
 ];
+
+vertex_size_element.addEventListener("change", (e) => {
+    sceneOptions.debug.points.size = +(e.target as HTMLInputElement).value;
+    console.log(sceneOptions.debug.points.size);
+    viewer.updatePointHelpers();
+})
+
+
+vertex_color_element.addEventListener("change", (e) => {
+    const hex = (e.target as HTMLInputElement).value;
+    sceneOptions.debug.points.color = parseInt(hex.replace("#", ""), 16);
+    viewer.updatePointHelpers();
+})
 
 buttons.forEach(({ btn, panel }) => {
     // @ts-ignore

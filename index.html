@@ -78,10 +78,18 @@
             <div class="panel-title">Vertex settings</div>
             <div class="row">
               <label>Size</label>
-              <label><input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value"></label>
-              <span class="val">5</span></div>
+              <label for="vertex_size_config"></label>
+              <input id="vertex_size_config"
+                     type="range"
+                     min="0.0"
+                     max="1"
+                     value="1"
+                     step="0.1"
+                     oninput="this.nextElementSibling.textContent = this.value">
+              <span>0.002</span>
+            </div>
             <div class="row"><label>Color</label>
-              <label><input type="color" value="#4a90e2"></label>
+              <label><input id="vertex_color_config" type="color" value="#4a90e2"></label>
             </div>
             <div class="row"><label>Shape</label>
               <label>

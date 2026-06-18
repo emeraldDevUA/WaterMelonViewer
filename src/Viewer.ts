@@ -64,6 +64,12 @@ export class Viewer {
     public setSettings() {
         const debugContext = this.options.debug;
 
+
+        const vertex_material = new THREE.PointsMaterial({
+            color: debugContext.points.color,
+            size: debugContext.points.size
+        });
+
         this.scene.traverse((object) => {
 
             if ((object as THREE.Mesh).isMesh) {
@@ -99,14 +105,8 @@ export class Viewer {
                 if (debugContext.points.enabled) {
 
                     if (!meshData.pointsHelper) {
-
-                        const material = new THREE.PointsMaterial({
-                            color: 0xffffff,
-                            size: 0.05
-                        });
-
-                        const helper = new THREE.Points(mesh.geometry, material);
-
+                        // no need to create a different mat every time
+                        const helper = new THREE.Points(mesh.geometry, vertex_material);
                         mesh.add(helper); // attach to mesh
                         meshData.pointsHelper = helper;
                     }
@@ -118,9 +118,7 @@ export class Viewer {
                         meshData.pointsHelper.material.dispose();
                         meshData.pointsHelper = null;
                     }
-
                 }
-
             }
         });
 
@@ -144,28 +142,29 @@ export class Viewer {
             this.scene.remove(this.axesHelper)
         }
 
-        if(this.options.renderer.skybox.enabled) {
+        if (this.options.renderer.skybox.enabled) {
 
-            if(this.skyBox == null) {
+            if (this.skyBox == null) {
                 const loader = new THREE.CubeTextureLoader();
                 this.skyBox = loader.load([
-                    // Why the fuck is it not working?
-                    'res/SkyBox/pos_x.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
-                    'res/SkyBox/pos_y.jpg', 'res/SkyBox/neg_y.jpg', // pos-y, neg-y
-                    'res/SkyBox/neg_z.jpg', 'res/SkyBox/pos_z.jpg'  // pos-z, neg-z
-                ],  () => console.log("Skybox loaded"),
+                        // Why the fuck is it not working?
+                        'res/SkyBox/pos_x.jpg', 'res/SkyBox/neg_x.jpg', // pos-x, neg-x
+                        'res/SkyBox/pos_y.jpg', 'res/SkyBox/neg_y.jpg', // pos-y, neg-y
+                        'res/SkyBox/neg_z.jpg', 'res/SkyBox/pos_z.jpg'  // pos-z, neg-z
+                    ], () => console.log("Skybox loaded"),
                     undefined,
                     (err) => console.error("Skybox failed:", err)
                 );
             }
             this.scene.background = this.skyBox;
-        }else {
+        } else {
             this.scene.background = new THREE.Color(this.options.renderer.backgroundColor)
         }
 
         for (const light of this.lighting_configurations) {
             this.scene.remove(light);
         }
+
         this.lighting_configurations.length = 0;
 
         this.parseLighting(this.options.lighting);
@@ -173,10 +172,7 @@ export class Viewer {
             this.scene.add(configuration);
         })
 
-
-         this.renderer.setAnimationLoop(this.animate)
-
-
+        this.renderer.setAnimationLoop(this.animate)
     }
 
     private init() {
@@ -194,11 +190,11 @@ export class Viewer {
     private animate = (time: number) => {
         this.renderer.render(this.scene, this.camera)
         // inefficient af, but whatever
-        const isOn = + (this.options.camera.autoRotate);
-        const speed = + (this.options.camera.autoRotateSpeed);
+        const isOn = +(this.options.camera.autoRotate);
+        const speed = +(this.options.camera.autoRotateSpeed);
 
 
-        this.controls.rotateLeft( speed * isOn * 1E-7 * time)
+        this.controls.rotateLeft(speed * isOn * 1E-7 * time)
     }
 
 
@@ -217,7 +213,7 @@ export class Viewer {
         this.renderer.setSize(width, height);
     }
 
-    public getRender(){
+    public getRender() {
         return this.renderer;
     }
 
@@ -234,14 +230,14 @@ export class Viewer {
             light.castShadow = config.castShadow;
             this.lighting_configurations.push(light);
 
-            if (this.options.lighting.showHelpers){
+            if (this.options.lighting.showHelpers) {
                 const lightHelper = new THREE.DirectionalLightHelper(light, 5)
                 this.lighting_configurations.push(lightHelper);
             }
         }
     }
 
-    public updateGrid(){
+    public updateGrid() {
         // @ts-ignore
         this.scene.remove(this.gridHelper)
         this.gridHelper = new GridHelper(this.options.debug.grid.gridSize);
@@ -251,6 +247,30 @@ export class Viewer {
         // @ts-ignore
         this.scene.remove(this.axesHelper)
         this.axesHelper = new AxesHelper(this.options.debug.axes.axisSize);
+    }
+
+    public updatePointHelpers() {
+
+        const material = new THREE.PointsMaterial({
+            color: sceneOptions.debug.points.color,
+            size: sceneOptions.debug.points.size
+        });
+
+        this.scene.traverse((object) => {
+            if (!(object as THREE.Mesh).isMesh) return;
+
+            const mesh = object as THREE.Mesh;
+            const data = mesh.userData;
+
+            if (data.pointsHelper) {
+                mesh.remove(data.pointsHelper);
+            }
+
+            const helper = new THREE.Points(mesh.geometry, material);
+
+            mesh.add(helper);
+            data.pointsHelper = helper;
+        });
     }
 
     public getSceneInfo() {
@@ -264,7 +284,7 @@ export class Viewer {
             }
 
             if ((object as THREE.DirectionalLight).isLight) {
-                lightNames.push(object.name || "Directional light" );
+                lightNames.push(object.name || "Directional light");
             }
 
         });
