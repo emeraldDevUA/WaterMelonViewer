@@ -1,251 +1,263 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8"/>
 
     <link rel="stylesheet" href="styles/style.css"/>
-    <link rel="icon"  href="public/logo_no_background.png" />
+    <link rel="icon" href="public/logo_no_background.png"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>water_melon_viewer</title>
 
-  </head>
-  <body>
-    <div id = "app">
+</head>
+<body>
+<div id="app">
 
-      <div id="ui">
+    <div id="ui">
         <button id="main_menu">
-          <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
-            <path d="M3 6.5a1 1 0 100-2 1 1 0 000 2z"></path>
-            <path d="M6 5.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
-            <path d="M6 9.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
-            <path d="M10.5 13a.5.5 0 000 1h7a.5.5 0 000-1h-7z"></path>
-            <path d="M8 13.5a1 1 0 11-2 0 1 1 0 012 0z"></path>
-            <path d="M3 10.5a1 1 0 100-2 1 1 0 000 2z"></path>
-          </svg>
+            <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
+                <path d="M3 6.5a1 1 0 100-2 1 1 0 000 2z"></path>
+                <path d="M6 5.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
+                <path d="M6 9.5c0-.28.22-.5.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5z"></path>
+                <path d="M10.5 13a.5.5 0 000 1h7a.5.5 0 000-1h-7z"></path>
+                <path d="M8 13.5a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                <path d="M3 10.5a1 1 0 100-2 1 1 0 000 2z"></path>
+            </svg>
         </button>
 
         <button id="light_menu">
-          <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" width="20" height="20" viewBox="0 0 22 32"  xml:space="preserve" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" width="20" height="20" viewBox="0 0 22 32"
+                 xml:space="preserve" stroke="currentColor">
 
 	      <path d="M11,0C5.71,0,0,4.206,0,11c0,3.353,1.334,6.174,3.896,8.312c0.027,0.034,0.058,0.063,0.092,0.088   c1.901,2.062,1.997,2.454,2.01,3.361c0.006,0.359,0.003,0.465,0,0.523l-0.004,0.209c-0.015,0.452-0.038,1.209,0.899,1.495   l8.094,1.781c0.036,0.008,0.072,0.012,0.107,0.012c0.23,0,0.437-0.159,0.488-0.393c0.06-0.27-0.111-0.537-0.381-0.596l-8.055-1.771   c-0.155-0.047-0.168-0.051-0.154-0.498l0.003-0.191c0,0,0.01-0.078,0.002-0.586c-0.019-1.269-0.295-1.882-2.309-4.059   c-0.039-0.048-0.086-0.088-0.138-0.118C2.194,16.566,1,14.02,1,11C1,4.823,6.19,1,11,1c4.916,0,10,3.741,10,10   c0,3.978-1.928,6.171-3.518,7.551c-0.055,0.026-0.104,0.063-0.147,0.109c-2.037,2.204-2.313,2.817-2.332,4.086   c0,0.03-0.001,0.065,0,0.103l-0.001,0.035c-0.003,0.076-0.014,0.118-0.013,0.134C14.955,23.013,14.872,23,14.872,23l-4.195-0.987   c-0.272-0.062-0.538,0.104-0.601,0.372c-0.063,0.269,0.103,0.538,0.372,0.602l4.144,0.972c0.055,0.02,0.553,0.182,0.973-0.113   c0.183-0.129,0.396-0.382,0.434-0.866l0.003-0.047c0.001-0.032,0.002-0.065,0.002-0.099c0-0.009,0-0.018-0.001-0.026l0.001-0.046   c0.013-0.902,0.107-1.294,2.005-3.356c0.009-0.007,0.019-0.014,0.027-0.022C20.703,17.143,22,14.4,22,11C22,4.115,16.407,0,11,0z"/>
-          <path d="M15,29.5c0.229,0,0.435-0.157,0.487-0.39c0.062-0.269-0.107-0.537-0.377-0.598l-8-1.814   c-0.271-0.06-0.537,0.108-0.598,0.377c-0.062,0.269,0.107,0.537,0.377,0.598l8,1.814C14.927,29.496,14.964,29.5,15,29.5z"/>
-          <path d="M7.609,29.554c-0.271-0.06-0.536,0.109-0.598,0.378c-0.06,0.27,0.109,0.537,0.379,0.597l6.5,1.458   C13.928,31.996,13.964,32,14,32c0.229,0,0.436-0.158,0.488-0.391c0.06-0.27-0.109-0.537-0.379-0.597L7.609,29.554z"/>
+                <path d="M15,29.5c0.229,0,0.435-0.157,0.487-0.39c0.062-0.269-0.107-0.537-0.377-0.598l-8-1.814   c-0.271-0.06-0.537,0.108-0.598,0.377c-0.062,0.269,0.107,0.537,0.377,0.598l8,1.814C14.927,29.496,14.964,29.5,15,29.5z"/>
+                <path d="M7.609,29.554c-0.271-0.06-0.536,0.109-0.598,0.378c-0.06,0.27,0.109,0.537,0.379,0.597l6.5,1.458   C13.928,31.996,13.964,32,14,32c0.229,0,0.436-0.158,0.488-0.391c0.06-0.27-0.109-0.537-0.379-0.597L7.609,29.554z"/>
 
         </svg>
         </button>
 
         <div id="btn_container">
-          <button style="margin-left: 10%" id="vertices">
-            <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
-              <circle cx="5" cy="5" r="1.5"></circle>
-              <circle cx="15" cy="5" r="1.5"></circle>
-              <circle cx="5" cy="15" r="1.5"></circle>
-              <circle cx="15" cy="15" r="1.5"></circle>
-              <circle cx="10" cy="10" r="1.5"></circle>
-            </svg>
-          </button>
-          <button style="margin-left: 10%" id="edges">
-            <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
+            <button style="margin-left: 10%" id="vertices">
+                <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
+                    <circle cx="5" cy="5" r="1.5"></circle>
+                    <circle cx="15" cy="5" r="1.5"></circle>
+                    <circle cx="5" cy="15" r="1.5"></circle>
+                    <circle cx="15" cy="15" r="1.5"></circle>
+                    <circle cx="10" cy="10" r="1.5"></circle>
+                </svg>
+            </button>
+            <button style="margin-left: 10%" id="edges">
+                <svg width="20" height="20" viewBox="0 0 20 20" stroke="currentColor">
 
-              <polygon points="4,15 10,4 16,15"/>
-              <line x1="4" y1="15" x2="16" y2="15"/>
-              <line x1="10" y1="4" x2="10" y2="15"/>
+                    <polygon points="4,15 10,4 16,15"/>
+                    <line x1="4" y1="15" x2="16" y2="15"/>
+                    <line x1="10" y1="4" x2="10" y2="15"/>
 
-            </svg>
-          </button>
-          <button style="margin-left: 10%" id="normals">
-            <svg width="20" height="20" viewBox="0 0 20 20" >
+                </svg>
+            </button>
+            <button style="margin-left: 10%" id="normals">
+                <svg width="20" height="20" viewBox="0 0 20 20">
 
-              <!-- surface -->
-              <line x1="3" y1="15" x2="17" y2="15" stroke="currentColor" stroke-width="1"></line>
+                    <!-- surface -->
+                    <line x1="3" y1="15" x2="17" y2="15" stroke="currentColor" stroke-width="1"></line>
 
-              <!-- normal vectors -->
-              <line x1="6" y1="15" x2="6" y2="8" stroke="currentColor" stroke-width="1"></line>
-              <polygon points="6,6 4.5,8 7.5,8"></polygon>
+                    <!-- normal vectors -->
+                    <line x1="6" y1="15" x2="6" y2="8" stroke="currentColor" stroke-width="1"></line>
+                    <polygon points="6,6 4.5,8 7.5,8"></polygon>
 
-              <line x1="10" y1="15" x2="10" y2="8" stroke="currentColor" stroke-width="1"></line>
-              <polygon points="10,6 8.5,8 11.5,8"></polygon>
+                    <line x1="10" y1="15" x2="10" y2="8" stroke="currentColor" stroke-width="1"></line>
+                    <polygon points="10,6 8.5,8 11.5,8"></polygon>
 
-              <line x1="14" y1="15" x2="14" y2="8" stroke="currentColor" stroke-width="1"></line>
-              <polygon points="14,6 12.5,8 15.5,8"></polygon>
+                    <line x1="14" y1="15" x2="14" y2="8" stroke="currentColor" stroke-width="1"></line>
+                    <polygon points="14,6 12.5,8 15.5,8"></polygon>
 
-            </svg>
-          </button>
+                </svg>
+            </button>
 
         </div>
         <div class="settings-panel" id="panel-vertices">
-          <div class="panel-inner">
-            <div class="panel-title">Vertex settings</div>
-            <div class="row">
-              <label>Size</label>
-              <label for="vertex_size_config"></label>
-              <input id="vertex_size_config"
-                     type="range"
-                     min="0.0"
-                     max="1"
-                     value="1"
-                     step="0.1"
-                     oninput="this.nextElementSibling.textContent = this.value">
-              <span>0.002</span>
+            <div class="panel-inner">
+                <div class="panel-title">Vertex settings</div>
+                <div class="row">
+                    <label>Size</label>
+                    <label for="vertex_size_config"></label>
+                    <input id="vertex_size_config"
+                           type="range"
+                           min="0.0"
+                           max="1"
+                           value="1"
+                           step="0.1"
+                           oninput="this.nextElementSibling.textContent = this.value">
+                    <span>0.002</span>
+                </div>
+                <div class="row"><label>Color</label>
+                    <label><input id="vertex_color_config" type="color" value="#4a90e2"></label>
+                </div>
+                <div class="row"><label>Shape</label>
+                    <label>
+                        <select>
+                            <option>Circle</option>
+                            <option>Square</option>
+                            <option>Diamond</option>
+                        </select>
+                    </label>
+                </div>
             </div>
-            <div class="row"><label>Color</label>
-              <label><input id="vertex_color_config" type="color" value="#4a90e2"></label>
-            </div>
-            <div class="row"><label>Shape</label>
-              <label>
-              <select><option>Circle</option>
-                <option>Square</option>
-                <option>Diamond</option>
-              </select>
-            </label>
-            </div>
-          </div>
         </div>
 
         <div class="settings-panel" id="panel-edges">
-          <div class="panel-inner">
-            <div class="panel-title">Edge settings</div>
-            <div class="row"><label>Width</label><label>
-              <input type="range" min="1" max="10" value="2" oninput="this.nextElementSibling.textContent=this.value">
-            </label><span class="val">2</span></div>
-            <div class="row"><label>Style</label>
-              <label>
-                <select><option>Solid</option><option>Dashed</option><option>Dotted</option></select>
-              </label>
-            </div>
+            <div class="panel-inner">
+                <div class="panel-title">Edge settings</div>
+                <div class="row"><label>Width</label><label>
+                    <input type="range" min="1" max="10" value="2"
+                           oninput="this.nextElementSibling.textContent=this.value">
+                </label><span class="val">2</span></div>
+                <div class="row"><label>Style</label>
+                    <label>
+                        <select>
+                            <option>Solid</option>
+                            <option>Dashed</option>
+                            <option>Dotted</option>
+                        </select>
+                    </label>
+                </div>
 
-            <div class="row">
-              <label>Color</label>
-              <label><input type="color" value="#333333"></label>
-            </div>
+                <div class="row">
+                    <label>Color</label>
+                    <label><input type="color" value="#333333"></label>
+                </div>
 
-          </div>
+            </div>
         </div>
 
         <div class="settings-panel" id="panel-normals">
-          <div class="panel-inner">
-            <div class="panel-title">Normal settings</div>
-            <div class="row">
-              <label>Length</label>
-              <label><input type="range" min="5" max="50" value="20" oninput="this.nextElementSibling.textContent=this.value"></label>
-              <span class="val">20</span>
+            <div class="panel-inner">
+                <div class="panel-title">Normal settings</div>
+                <div class="row">
+                    <label>Length</label>
+                    <label><input id="normal_size_config" type="range" min="1" max="10" value="2"
+                                  oninput="this.nextElementSibling.textContent=this.value"></label>
+                    <span class="val">20</span>
+                </div>
+                <div class="row">
+                    <label>Color</label>
+                    <label><input id="normal_color_config" type="color" value="#e24b4a"></label>
+                </div>
+                <div class="row">
+                    <label>Arrow</label>
+                    <label><select>
+                        <option>Arrow</option>
+                        <option>Line</option>
+                        <option>Dot</option>
+                    </select></label>
+                </div>
             </div>
-            <div class="row">
-              <label>Color</label>
-              <label><input type="color" value="#e24b4a"></label>
-            </div>
-            <div class="row">
-              <label>Arrow</label>
-              <label><select><option>Arrow</option><option>Line</option><option>Dot</option></select></label>
-            </div>
-          </div>
         </div>
-      </div>
-
-        <div id="settings_container" class = "hidden">
-
-          <h3>Camera</h3>
-          <div class="subblock grid-block">
-          <div class="setting">
-            <label for="autoRotate">Auto Rotate</label>
-            <input type="checkbox" id="autoRotate">
-          </div>
-
-          <div class="setting">
-            <label for="autoRotateSpeed">Auto Rotate Speed</label>
-            <input type="number" id="autoRotateSpeed" step="0.1" min="0" max="10" value="0.1">
-          </div>
-        </div>
-
-            <h3>Debug</h3>
-
-          <div class="subblock grid-block">
-            <span class="subblock-label">Grid</span>
-            <div class="setting">
-              <label for="showGrid">Show</label>
-              <input type="checkbox" id="showGrid">
-            </div>
-            <div class="setting">
-              <label for="grid_size">Size</label>
-              <input type="number" id="grid_size" step="5" min="1" max="500" value="5">
-            </div>
-          </div>
-
-          <div class="subblock axes-block">
-            <span class="subblock-label">Axes</span>
-            <div class="setting">
-              <label for="showAxes">Show</label>
-              <input type="checkbox" id="showAxes">
-            </div>
-            <div class="setting">
-              <label for="axes_size">Size</label>
-              <input type="number" id="axes_size" step="5" min="1" max="500" value="5">
-            </div>
-          </div>
-
-          <h3>Scene</h3>
-          <div class="subblock axes-block" id="scene_elements">
-          </div>
-          <button id="recenter-btn">Recenter Mesh</button>
-          <button id="clear-btn">Clear Scene</button>
-        </div>
-
-        <div id="lighting_container" class = "hidden">
-
-          <h3>Renderer</h3>
-          <div class="subblock grid-block">
-          <div class="setting">
-            <label for="enableSkyBox">Skybox</label>
-            <input type="checkbox" id="enableSkyBox">
-          </div>
-
-          <div class="setting">
-            <label for="backgroundColor">Background Color</label>
-            <input type="color" id="backgroundColor">
-          </div>
-
-          <div class="setting">
-            <label for="exposure">Exposure</label>
-            <input type="number" id="exposure" step="0.1" min="0" max="5" value="1.2">
-          </div>
-        </div>
-
-          <div class="subblock grid-block">
-          <div class="setting">
-            <label for="shadowsEnabled">Enable Shadows</label>
-            <input type="checkbox" id="shadowsEnabled">
-            <label for="showLightGizmo">Gizmos</label>
-            <input type="checkbox" id="showLightGizmo">
-          </div>
-          </div>
-
-          <h3>Lighting</h3>
-          <div class="subblock grid-block">
-          <button id="lighting_config1">Lighting Configuration 1</button>
-          <button id="lighting_config2">Lighting Configuration 2</button>
-          <button id="lighting_config3">Lighting Configuration 3</button>
-          <button id="lighting_config4">Lighting Configuration 4</button>
-          <button id="lighting_config5">Lighting Configuration 5</button>
-          </div>
-        </div>
-
-        <button id = "model_properties">
-          <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" width="15px" height="15px"
-               viewBox="0 0 27.774 27.774" xml:space="preserve" stroke="currentColor" fill="currentColor">
-              <path d="M10.398,22.811h4.618v4.964h-4.618V22.811z M21.058,1.594C19.854,0.532,17.612,0,14.33,0c-3.711,0-6.205,0.514-7.482,1.543   c-1.277,1.027-1.916,3.027-1.916,6L4.911,8.551h4.577l-0.02-1.049c0-1.424,0.303-2.377,0.907-2.854   c0.604-0.477,1.814-0.717,3.632-0.717c1.936,0,3.184,0.228,3.74,0.676c0.559,0.451,0.837,1.457,0.837,3.017   c0,1.883-0.745,3.133-2.237,3.752l-1.797,0.766c-1.882,0.781-3.044,1.538-3.489,2.27c-0.442,0.732-0.665,2.242-0.665,4.529h4.68   v-0.646c0-1.41,0.987-2.533,2.965-3.365c2.03-0.861,3.343-1.746,3.935-2.651c0.592-0.908,0.888-2.498,0.888-4.771   C22.863,4.625,22.261,2.655,21.058,1.594z"/>
-        </svg>
-        </button>
-
-        <div id="model_properties_container" class = "hidden">
-          <h3>Model Info</h3>
-          <div>Vertices: <span id="vert_count">0</span></div>
-          <div>Faces: <span id="face_count">0</span></div>
-          <div>Has Normals: <span id="has_normals">true</span></div>
-        </div>
-
     </div>
 
-    <script type="module" src="src/main.ts"></script>
+    <div id="settings_container" class="hidden">
 
-  </body>
+        <h3>Camera</h3>
+        <div class="subblock grid-block">
+            <div class="setting">
+                <label for="autoRotate">Auto Rotate</label>
+                <input type="checkbox" id="autoRotate">
+            </div>
+
+            <div class="setting">
+                <label for="autoRotateSpeed">Auto Rotate Speed</label>
+                <input type="number" id="autoRotateSpeed" step="0.1" min="0" max="10" value="0.1">
+            </div>
+        </div>
+
+        <h3>Debug</h3>
+
+        <div class="subblock grid-block">
+            <span class="subblock-label">Grid</span>
+            <div class="setting">
+                <label for="showGrid">Show</label>
+                <input type="checkbox" id="showGrid">
+            </div>
+            <div class="setting">
+                <label for="grid_size">Size</label>
+                <input type="number" id="grid_size" step="5" min="1" max="500" value="5">
+            </div>
+        </div>
+
+        <div class="subblock axes-block">
+            <span class="subblock-label">Axes</span>
+            <div class="setting">
+                <label for="showAxes">Show</label>
+                <input type="checkbox" id="showAxes">
+            </div>
+            <div class="setting">
+                <label for="axes_size">Size</label>
+                <input type="number" id="axes_size" step="5" min="1" max="500" value="5">
+            </div>
+        </div>
+
+        <h3>Scene</h3>
+        <div class="subblock axes-block" id="scene_elements">
+        </div>
+        <button id="recenter-btn">Recenter Mesh</button>
+        <button id="clear-btn">Clear Scene</button>
+    </div>
+
+    <div id="lighting_container" class="hidden">
+
+        <h3>Renderer</h3>
+        <div class="subblock grid-block">
+            <div class="setting">
+                <label for="enableSkyBox">Skybox</label>
+                <input type="checkbox" id="enableSkyBox">
+            </div>
+
+            <div class="setting">
+                <label for="backgroundColor">Background Color</label>
+                <input type="color" id="backgroundColor">
+            </div>
+
+            <div class="setting">
+                <label for="exposure">Exposure</label>
+                <input type="number" id="exposure" step="0.1" min="0" max="5" value="1.2">
+            </div>
+        </div>
+
+        <div class="subblock grid-block">
+            <div class="setting">
+                <label for="shadowsEnabled">Enable Shadows</label>
+                <input type="checkbox" id="shadowsEnabled">
+                <label for="showLightGizmo">Gizmos</label>
+                <input type="checkbox" id="showLightGizmo">
+            </div>
+        </div>
+
+        <h3>Lighting</h3>
+        <div class="subblock grid-block" style="width: 92%;">
+            <button id="lighting_config1" class="large-btn">Soft Daylight</button>
+            <button id="lighting_config2" class="large-btn">Golden Hour (Sunset)</button>
+            <button id="lighting_config3" class="large-btn">Moonlight</button>
+            <button id="lighting_config4" class="large-btn">Three-point studio</button>
+            <button id="lighting_config5" class="large-btn">Summer Dusk</button>
+        </div>
+    </div>
+
+    <button id="model_properties">
+        <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" width="15px" height="15px"
+             viewBox="0 0 27.774 27.774" xml:space="preserve" stroke="currentColor" fill="currentColor">
+              <path d="M10.398,22.811h4.618v4.964h-4.618V22.811z M21.058,1.594C19.854,0.532,17.612,0,14.33,0c-3.711,0-6.205,0.514-7.482,1.543   c-1.277,1.027-1.916,3.027-1.916,6L4.911,8.551h4.577l-0.02-1.049c0-1.424,0.303-2.377,0.907-2.854   c0.604-0.477,1.814-0.717,3.632-0.717c1.936,0,3.184,0.228,3.74,0.676c0.559,0.451,0.837,1.457,0.837,3.017   c0,1.883-0.745,3.133-2.237,3.752l-1.797,0.766c-1.882,0.781-3.044,1.538-3.489,2.27c-0.442,0.732-0.665,2.242-0.665,4.529h4.68   v-0.646c0-1.41,0.987-2.533,2.965-3.365c2.03-0.861,3.343-1.746,3.935-2.651c0.592-0.908,0.888-2.498,0.888-4.771   C22.863,4.625,22.261,2.655,21.058,1.594z"/>
+        </svg>
+    </button>
+
+    <div id="model_properties_container" class="hidden">
+        <h3>Model Info</h3>
+        <div>Vertices: <span id="vert_count">0</span></div>
+        <div>Faces: <span id="face_count">0</span></div>
+        <div>Has Normals: <span id="has_normals">true</span></div>
+    </div>
+
+</div>
+
+<script type="module" src="src/main.ts"></script>
+
+</body>
 </html>

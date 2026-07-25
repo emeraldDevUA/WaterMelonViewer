@@ -136,9 +136,7 @@ function addOverflow() {
 
     try {
         console.log("STEP 4: loading OBJ");
-
         const model = await loadMeshFromIndexDB(file);
-
         console.log("STEP 5: model loaded", model);
 
         viewer.addMesh(model);
@@ -150,7 +148,7 @@ function addOverflow() {
         viewer.setSettings();
 
     } catch (err) {
-        console.error("OBJ LOAD FAILED:", err);
+        console.error("Model parsing failed.", err);
     }
 })();
 
@@ -196,7 +194,8 @@ const autoRotateSpeed = document.getElementById("autoRotateSpeed")! as HTMLInput
 
 const vertex_size_element = document.getElementById("vertex_size_config")! as HTMLInputElement;
 const vertex_color_element = document.getElementById("vertex_color_config")! as HTMLInputElement;
-
+const normal_size_element = document.getElementById("normal_size_config")! as HTMLInputElement;
+const normal_color_element = document.getElementById("normal_color_config")! as HTMLInputElement;
 
 const buttons = [
     { btn: document.getElementById('vertices'), panel: document.getElementById('panel-vertices') },
@@ -206,16 +205,28 @@ const buttons = [
 
 vertex_size_element.addEventListener("change", (e) => {
     sceneOptions.debug.points.size = +(e.target as HTMLInputElement).value;
-    console.log(sceneOptions.debug.points.size);
     viewer.updatePointHelpers();
 })
 
+
+normal_size_element.addEventListener("change", (e) => {
+    sceneOptions.debug.normals.size = +(e.target as HTMLInputElement).value;
+    console.log(sceneOptions.debug.points.size);
+    viewer.setSettings();
+})
 
 vertex_color_element.addEventListener("change", (e) => {
     const hex = (e.target as HTMLInputElement).value;
     sceneOptions.debug.points.color = parseInt(hex.replace("#", ""), 16);
     viewer.updatePointHelpers();
 })
+
+normal_color_element.addEventListener("change", (e) => {
+    const hex = (e.target as HTMLInputElement).value;
+    sceneOptions.debug.normals.color = parseInt(hex.replace("#", ""), 16);
+    viewer.setSettings();
+})
+
 
 buttons.forEach(({ btn, panel }) => {
     // @ts-ignore
@@ -413,7 +424,6 @@ enableSkyBoxCheckbox.addEventListener("change", () => {
     sceneOptions.renderer.skybox.enabled = enableSkyBoxCheckbox.checked;
     viewer.setSettings();
 });
-
 
 vertex_button.addEventListener("click", () => {
     vertex_button.classList.toggle("active");

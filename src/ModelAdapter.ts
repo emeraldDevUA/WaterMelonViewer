@@ -46,16 +46,16 @@ type ResolvedInput = {
 
 const LOADER_MAP = {
     gltf: GLTFLoader,
-    glb:  GLTFLoader,
-    obj:  OBJLoader,
-    fbx:  FBXLoader,
-    stl:  STLLoader,
-    ply:  PLYLoader,
-    dae:  ColladaLoader,
-    amf:  AMFLoader,
-    wrl:  VRMLLoader,
-    vtk:  VTKLoader,
-    usd:  USDLoader,
+    glb: GLTFLoader,
+    obj: OBJLoader,
+    fbx: FBXLoader,
+    stl: STLLoader,
+    ply: PLYLoader,
+    dae: ColladaLoader,
+    amf: AMFLoader,
+    wrl: VRMLLoader,
+    vtk: VTKLoader,
+    usd: USDLoader,
 
     "3ds": TDSLoader,
     "3mf": ThreeMFLoader,
@@ -123,31 +123,31 @@ function normalizeLoaderResult(result: any, fileName: string): Mesh | Group {
 async function resolveInput(input: File | Blob | ArrayBuffer | string): Promise<ResolvedInput> {
     if (typeof input === "string") {
         const buffer = new TextEncoder().encode(input).buffer;
-        return { text: input, buffer };
+        return {text: input, buffer};
     }
 
     if (input instanceof ArrayBuffer) {
-        return { text: new TextDecoder().decode(input), buffer: input };
+        return {text: new TextDecoder().decode(input), buffer: input};
     }
 
     const hint = input instanceof File ? getExtension(input.name) : undefined;
     const buffer = await input.arrayBuffer();
-    return { text: new TextDecoder().decode(buffer), buffer, hint };
+    return {text: new TextDecoder().decode(buffer), buffer, hint};
 }
 
 function detectInlineFormat(text: string, hint?: string): SupportedInlineFormat {
     if (hint && INLINE_FORMATS.has(hint)) return hint as SupportedInlineFormat;
     if (text.trimStart().startsWith("<?xml") || text.includes("<COLLADA")) return "dae";
-    if (text.startsWith("ply"))   return "ply";
+    if (text.startsWith("ply")) return "ply";
     if (text.startsWith("solid")) return "stl";
-    if (text.startsWith("glb"))   return "glb";
+    if (text.startsWith("glb")) return "glb";
     return "obj";
 }
 
 export async function loadMeshFromIndexDB(
     input: File | Blob | ArrayBuffer | string,
 ): Promise<Scene | Group> {
-    const { text, buffer, hint } = await resolveInput(input);
+    const {text, buffer, hint} = await resolveInput(input);
     const format = detectInlineFormat(text, hint);
 
     switch (format) {

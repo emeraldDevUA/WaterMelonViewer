@@ -58,7 +58,7 @@ function getGroupInfo(group: THREE.Group | THREE.Object3D): GroupInfo {
         }
     });
 
-    return { totalVertices, totalFaces, meshCount };
+    return {totalVertices, totalFaces, meshCount};
 }
 
 function isMesh(object: THREE.Object3D): object is THREE.Mesh {

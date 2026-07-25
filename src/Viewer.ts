@@ -5,8 +5,6 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import {VertexNormalsHelper} from "three/examples/jsm/helpers/VertexNormalsHelper.js";
 import {AxesHelper, GridHelper} from "three";
 
-// import {Group} from "three";
-
 type LightPosition = {
     x: number;
     y: number;
@@ -32,6 +30,8 @@ export class Viewer {
 
     private gridHelper: THREE.GridHelper | undefined;
     private axesHelper: THREE.AxesHelper | undefined;
+
+
     private lighting_configurations: Array<THREE.Object3D> = [];
 
     private skyBox: THREE.CubeTexture | undefined;
@@ -49,6 +49,7 @@ export class Viewer {
         window.addEventListener("resize", this.onWindowResize.bind(this));
 
         this.setSettings();
+
     }
 
     public addMesh(mesh: THREE.Object3D) {
@@ -83,7 +84,7 @@ export class Viewer {
                         const helper = new VertexNormalsHelper(
                             mesh,
                             debugContext.normals.size,
-                            0x00ff00
+                            debugContext.normals.color
                         );
 
                         this.scene.add(helper); // correct
@@ -101,13 +102,33 @@ export class Viewer {
 
                 // example: enable wireframe
                 // @ts-ignore
-                (mesh.material as THREE.Material).wireframe = debugContext.wireframe.enabled as boolean;
+                if (debugContext.wireframe.enabled) {
+                    if (!meshData.wireframeHelper) {
+                        const wireframeGeometry = new THREE.WireframeGeometry(mesh.geometry);
+                        const wireframeMaterial = new THREE.LineBasicMaterial({
+                            color: debugContext.wireframe.color
+                        });
+                        const wireframeHelper = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+                        wireframeHelper.userData.isHelper = true; // keep it out of getSceneInfo/mesh-picking if needed
+                        mesh.add(wireframeHelper);
+                        meshData.wireframeHelper = wireframeHelper;
+                    } else {
+                        // color may have changed since last call, geometry hasn't
+                        (meshData.wireframeHelper.material as THREE.LineBasicMaterial).color.set(debugContext.wireframe.color);
+                    }
+                } else {
+                    if (meshData.wireframeHelper) {
+                        mesh.remove(meshData.wireframeHelper);
+                        meshData.wireframeHelper.geometry.dispose();
+                        meshData.wireframeHelper.material.dispose();
+                        meshData.wireframeHelper = null;
+                    }
+                }
                 if (debugContext.points.enabled) {
-
                     if (!meshData.pointsHelper) {
                         // no need to create a different mat every time
                         const helper = new THREE.Points(mesh.geometry, vertex_material);
-                        mesh.add(helper); // attach to mesh
+                        mesh.add(helper);
                         meshData.pointsHelper = helper;
                     }
 
